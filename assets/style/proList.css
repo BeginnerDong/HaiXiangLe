@@ -1,0 +1,34 @@
+
+.userTit{height: 90rpx;box-sizing: border-box;padding: 20rpx 4%;background: #fff;position: fixed;top: 88rpx;left: 0;right: 0; z-index: 10;}
+.userTitH{height: 90rpx;}
+.userPhoto{width: 50rpx;height: 50rpx;border-radius: 50%;overflow: hidden;}
+
+/* 列表 */
+.proList{flex-wrap: wrap;}
+.proList .item{width: 100%;box-sizing: border-box;margin-top: 30rpx;border-radius: 16rpx;overflow: hidden;position: relative;background: #FFF;}
+.proList .pic{width: 100%;height:350rpx;position: relative;}
+.proList .xsNum{position: absolute;top: 0;left: 0;z-index: 1;min-width: 190rpx;line-height: 50rpx;height: 50rpx;padding: 0rpx 20rpx;box-sizing: border-box;font-size: 26rpx;color: #fff;background: rgba(0,0,0,0.5);text-align: center;border-radius: 0 0 15px 0;}
+.proList .item .tit{padding: 20rpx 4%;}
+.proList .item .infor{padding: 30rpx 4%;}
+.proList .buyBtn{width: 230rpx;height: 60rpx;line-height: 60rpx;box-sizing: border-box;text-align: center;
+color: #fff;border-radius: 30rpx;padding: 0 20rpx;background: #000000;}
+.proList .buyBtn.green{background: #86e2b1;}
+.proList .buyBtn.red{background: #ff4653;}
+.proList .buyBtn.gray{background: #d0d0d0;}
+
+.fyBtn .btn{width: 140rpx;height: 40rpx;line-height: 40rpx;border: 1px solid #ff974a;border-radius: 10rpx;text-align: center;}
+.fyBtn .btn .tt{width: 70rpx;height: 40rpx;background: #ff974a;color: #fff;}
+.fyBtn .btn .fyNmy{width:70rpx;color: #ff974a;}
+.fyBtn .btn.red{border-color: #f4479c;}
+.fyBtn .btn.red .tt{background: #f4479c;}
+.fyBtn .btn.red .fyNmy{color: #f4479c;}
+
+
+/* 数量加减 */
+.numBox{border: 1px solid #eee;border-radius: 10rpx;overflow: hidden;}
+.numBox view{ height: 60rpx;line-height: 60rpx; text-align: center; box-sizing: border-box;}
+.numBox .btn{width: 60rpx;color: #999; font-size:38rpx;background: #e7e7e7;}
+/* .numBox .btn.add{border-color: #FC73AA;color: #fff;border:1px solid #FCC401;} */
+.numBox view.num{ min-width: 90rpx; color: #333; font-size: 26rpx;padding: 0 6rpx;}
+
+
