@@ -73,6 +73,6 @@
         "router" : {
             "base" : "/wx/"
         },
-        "domain" : "https://www.local-scanner.com"
+        "domain" : "http://test.solelyfinance.com/wx"
     }
 }

@@ -2,32 +2,34 @@
 	<view>
 		<view class="pdlr4">
 			<view class="proList">
-				<view class="item boxShaow" v-for="(item,index) in proData" :key="index" @click="Router.navigateTo({route:{path:'/pages/detail/detail'}})">
-					<view class="xsNum">销售量：662</view>
+				<view class="item boxShaow" v-for="(item,index) in mainData" :key="index" @click="Router.navigateTo({route:{path:'/pages/detail/detail'}})">
+					<view class="xsNum">销售量：{{item.sale_count}}</view>
 					<view class="pic">
-						<image src="../../static/images/home-img1.png" mode=""></image>
+						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
 					</view>
-					<view class="tit borderB1">美食接发大水考虑价格就过来就是大概工人更进反馈聊到几个大概就分类三都感觉刚放假东立国际割发代首卡啦啦啦</view>
+					<view class="tit borderB1">{{item.title}}</view>
 					<view class="infor">
 						<view class="flexRowBetween">
 							<view class="ll">
 								<view class="flex">
-									<view class="price fs16 ftw mgr5">165.99</view>
-									<view class="yuanJia fs10 color9">门市价￥230</view>
+									<view class="price fs16 ftw mgr5">{{item.price}}</view>
+									<view class="yuanJia fs10 color9">门市价￥{{item.o_price}}</view>
 								</view>
-								<view class="flex fyBtn fs10 mgt5">
+								<view class="flex fyBtn fs10 mgt5" v-if="userData.primary_scope>10">
 									<view class="btn mgr10 flex">
 										<view class="tt">返佣</view>
-										<view class="fyNmy">￥23</view>
+										<view class="fyNmy">￥{{item.class_one}}</view>
 									</view>
 									<view class="btn red flex">
 										<view class="tt">返佣</view>
-										<view class="fyNmy">￥13</view>
+										<view class="fyNmy">￥{{item.class_two}}</view>
 									</view>
 								</view>
 							</view>
 							<view class="rr">
-								<view class="buyBtn green">抢购中</view>
+								<view class="buyBtn green"  v-show="item.is_Buying&&!item.is_noStock">抢购中</view>
+								<view class="buyBtn red" v-show="item.is_notBuying&&!item.is_noStock">预售</view>
+								<view class="buyBtn gray" v-show="item.is_noStock">已售罄</view>
 							</view>
 						</view>
 					</view>
@@ -69,21 +71,100 @@
 				Router:this.$Router,
 				is_show: false,
 				wx_info:{},
-				proData:[{},{},{}]
+				proData:[{},{},{}],
+				mainData:[],
+				userData:{}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData','getUserData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
-			getMainData() {
+			
+			getUserData() {
 				const self = this;
-				console.log('852369')
+				console.log(2323434)
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.userData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserData');
+					
+				};
+				self.$apis.userGet(postData, callback);
+			},
+			
+			getMainData(isNew) {
+				const self = this;
+				var now = new Date().getTime();
+				if(isNew){
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
+				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id: 2,
+					start_time: ['<', now],
+				};
+				postData.getAfter = {
+					sku: {
+						tableName: 'Sku',
+						middleKey: 'product_no',
+						key: 'product_no',
+						condition: '=',
+						searchItem: {
+							status: 1
+						}
+					}
+				};
+				postData.order = {
+					listorder: 'desc'
+				};
+				const callback = (res) => {
+					
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+						for (var i = 0; i < self.mainData.length; i++) {
+							if(self.mainData[i].stock==0||self.mainData[i].sellout==1){
+								self.mainData[i].is_noStock = true
+							};
+							if(parseInt(self.mainData[i].end_time)>now){
+								self.mainData[i].is_notBuying = true
+							}else{
+								self.mainData[i].is_Buying = true
+							}
+						}
+					}else{
+						
+					};
+					self.$Utils.finishFunc('getMainData');
+						
+				};
+				self.$apis.productGet(postData, callback);
+			},
 		}
 	};
 </script>

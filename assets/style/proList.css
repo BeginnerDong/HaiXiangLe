@@ -1,5 +1,5 @@
 
-.userTit{height: 90rpx;box-sizing: border-box;padding: 20rpx 4%;background: #fff;position: fixed;top: 88rpx;left: 0;right: 0; z-index: 10;}
+.userTit{height: 90rpx;box-sizing: border-box;padding: 20rpx 4%;background: #fff;position: fixed;top: 0;left: 0;right: 0; z-index: 10;}
 .userTitH{height: 90rpx;}
 .userPhoto{width: 50rpx;height: 50rpx;border-radius: 50%;overflow: hidden;}
 

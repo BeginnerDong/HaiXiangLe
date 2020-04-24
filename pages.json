@@ -4,7 +4,8 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",//设置页面标题文字
-				"onReachBottomDistance":100
+				"onReachBottomDistance":100,
+				"navigationStyle":"custom"
 			}
 		},
 		{
@@ -146,7 +147,8 @@
 		//"navigationStyle":"custom",
 		"navigationBarTextStyle": "black",//导航栏文字
 		"navigationBarTitleText": "嗨享乐公众号",
-		"navigationBarBackgroundColor": "#f5f5f5"
+		"navigationBarBackgroundColor": "#f5f5f5",
+		"navigationStyle":"custom"
 	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)

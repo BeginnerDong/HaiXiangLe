@@ -1,17 +1,17 @@
 <template>
-	<view>
+	<view v-if="showAll">
 		
 		<view class="logo pr center pubColor" style="font-size: 100rpx;line-height: 100rpx;padding: 180rpx 4% 140rpx 4%;">Welcome</view>
 		
 		<view class="loginCont">
 			<view class="item flex mgb20">
-				<input type="text" value="" placeholder="账号" placeholder-class="placeholder">
+				<input type="text" v-model="submitData.login_name" placeholder="账号" placeholder-class="placeholder">
 			</view>
 			<view class="item flex mgb20">
-				<input type="password" value="" placeholder="密码" placeholder-class="placeholder">
+				<input type="password" v-model="submitData.password" placeholder="密码" placeholder-class="placeholder">
 			</view>
 			
-			<view class="item submitbtn" style="margin-top: 60rpx; padding: 0;border: 0;" @click="Router.navigateTo({route:{path:'/pages/business-order/business-order'}})">
+			<view class="item submitbtn" style="margin-top: 60rpx; padding: 0;border: 0;"  @click="submit">
 				<button class="Wbtn" type="submint">立即登录</button>
 			</view>
 		</view>
@@ -27,24 +27,55 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{}
+				submitData:{
+					login_name:'',
+					password:''
+				},
+				showAll:false
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			if (uni.getStorageSync('staffToken')) {
+				uni.redirectTo({
+					url: '/pages/business-order/business-order'
+				})
+			}else{
+				self.showAll = true
+			}
 		},
+		
 		methods: {
 			
-			getMainData() {
+			submit() {
 				const self = this;
-				console.log('852369')
-				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
-		}
+			
+				const postData = {
+					login_name: self.submitData.login_name,
+					password:self.submitData.password
+				};
+				if (self.$Utils.checkComplete(self.submitData)) {
+					
+					const callback = (res) => {
+						if (res.solely_code == 100000) {
+							console.log(res);
+							uni.setStorageSync('staffToken', res.token);
+							uni.setStorageSync('staffInfo', res.info);
+							uni.redirectTo({
+								url: '/pages/business-order/business-order'
+							}) 
+						} else {
+							self.$Utils.showToast(res.msg,'none')
+						}
+					}
+					self.$apis.shopLogin(postData, callback);
+				} else {
+					self.$Utils.showToast('请补全登录信息', 'none')
+				};
+			},
+			
+		},
 	};
 </script>
 

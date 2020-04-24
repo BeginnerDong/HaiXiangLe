@@ -2,7 +2,40 @@
 <script>
 	import token from "./common/token.js"
 	export default {
-		onLaunch: function() {	
+		onLaunch: function() {
+			
+			if(location.search){
+				var searchArr = location.search.substr(1).split('&');
+			};
+			if(location.hash&&location.hash .split('?')[1]){
+				var hashArr = location.hash .split('?')[1].split('&');
+				var hash = location.hash .split('?')[0]
+			};
+			var arr = [];
+			if(searchArr){
+				arr = arr.concat(searchArr)
+			};
+			if(hashArr){
+				arr = arr.concat(hashArr)
+			};
+			var params = {};
+			for (var i = 0; i < arr.length; i++) {
+				var data = arr[i].split('=')
+				if (data.length === 2) {
+				  params[data[0]] = data[1]
+				};
+			};
+			console.log('22',params)
+			if(params.user_no){
+				console.log(333)
+				const callback = (res) => {
+					console.log(222)
+				};
+				token.getProjectToken(callback, {
+					refreshToken: true,daren_no:params.user_no
+				})
+			};
+			//token.getProjectToken();
 		},
 		onShow: function() {
 			console.log('App Show')

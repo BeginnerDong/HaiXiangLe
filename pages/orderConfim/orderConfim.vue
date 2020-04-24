@@ -2,23 +2,16 @@
 	<view>
 		<view class="mglr4 mgt15">
 			<view class="">
-				<view class="whiteBj radius10 mgb15" >
-					<view><image class="w" style="height: 8rpx;" src="../../static/images/the-ordert-icon5.png" mode="widthFix"></image></view>
-					<view class="pdlr4 pdt10 pdb15 flexCenter fs14 color6" style="height: 140rpx;box-sizing: border-box;" @click="Router.navigateTo({route:{path:'/pages/user_address/user_address'}})">
-						<image style="width: 30rpx;height: 30rpx;" src="../../static/images/addressl-icon4.png" mode=""></image>
-						<view class="mgl10">添加地址</view>
-					</view>
-				</view>
-				<view class="whiteBj radius10 mgb15" >
+				<view class="whiteBj radius10 mgb15" v-if="addressData.name">
 					<view><image class="w" style="height: 8rpx;" src="../../static/images/the-ordert-icon5.png" mode="widthFix"></image></view>
 					<view class="pdlr4 pdt10 pdb15">
 						<view class="flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/user_address/user_address'}})">
 							<view class="fs13 color6">
 								<view class="flex mgt5">
-									<view class="mgr15 color2">唐久</view>
-									<view>15689562352</view>
+									<view class="mgr15 color2">{{addressData.name}}</view>
+									<view>{{addressData.phone}}</view>
 								</view>
-								<view class="mgt5">西安市莲湖区糜家桥村72号 (搬到27号)</view>
+								<view class="mgt5">{{addressData.city+addressData.detail}}</view>
 							</view>
 							<view class="flexEnd" style="width: 20%;">
 								<image class="arrowR" src="../../static/images/the-ordert-icon6.png" mode=""></image>
@@ -26,22 +19,31 @@
 						</view>
 					</view>
 				</view>
+				<view class="whiteBj radius10 mgb15" v-else>
+					<view><image class="w" style="height: 8rpx;" src="../../static/images/the-ordert-icon5.png" mode="widthFix"></image></view>
+					<view class="pdlr4 pdt10 pdb15 flexCenter fs14 color6" style="height: 140rpx;box-sizing: border-box;" 
+					@click="Router.navigateTo({route:{path:'/pages/user_address/user_address'}})">
+						<image style="width: 30rpx;height: 30rpx;" src="../../static/images/addressl-icon4.png" mode=""></image>
+						<view class="mgl10">添加地址</view>
+					</view>
+				</view>
+				
 			</view>
 			
-			<view class="orderLis fs13 mgt15 pdlr4 radius10 whiteBj oh pdt15 pdb15">
+			<view class="orderLis fs13 mgt15 pdlr4 radius10 whiteBj oh pdt15 pdb15" v-for="(item,index) in mainData" :key="index">
 				<view class="flex pdb15 borderB1">
-					<view class="pic oh"><image src="../../static/images/the-ordert-img.png" mode=""></image></view>
-					<view class="infor mgl10 avoidOverflow3">【西安】29层云顶餐厅吃五星自助~仅178-2大2小抢悦豪自助餐~海鲜烧烤的號惬盛宴~使用7月底！菜品丰富！吃到扶墙走！</view>
+					<view class="pic oh"><image :src="item.product&&item.product.mainImg&&item.product.mainImg[0]?item.product.mainImg[0].url:''" mode=""></image></view>
+					<view class="infor mgl10 avoidOverflow3">{{item.product&&item.product.title?item.product.title:''}}</view>
 				</view>
 				<view class="flexRowBetween borderB1 pdtb15">
-					<view class="flex">规格：2盒装</view>
-					<view class="flexEnd price">56.2</view>
+					<view class="flex">规格：{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].title:''}}</view>
+					<view class="flexEnd price">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:''}}</view>
 				</view>
 				<view class="flexRowBetween  pdt15">
 					<view class="flex">购买数量：</view>
 					<view class="flexEnd numBox">
 						<view class="btn" @click="counter('-')">-</view>
-						<view class="num">{{count}}</view>
+						<view class="num">{{item.count}}</view>
 						<view class="btn add" @click="counter('+')">+</view>
 					</view>
 				</view>
@@ -49,7 +51,7 @@
 			
 			<view class="pdlr4 pdt15 pdb15 mgt15 radius10 whiteBj oh flex">
 				<view class="mgr10">备注</view>
-				<view class="beizhu"><input type="text" value="" placeholder="请输入备注" placeholder-class="placeholder" /></view>
+				<view class="beizhu"><input type="text" v-model="submitData.passage1" placeholder="请输入备注" placeholder-class="placeholder" /></view>
 			</view>
 			
 			<view class="mgt15 flex color6 fs13">
@@ -63,8 +65,8 @@
 		</view>
 		
 		<view class="xqbotomBar">
-			<view class="flex mgl15 fs12">总计：<view class="price fs14 ftw">56.2</view></view>
-			<view class="payBtn" @click="payShowShow">微信支付</view>
+			<view class="flex mgl15 fs12">总计：<view class="price fs14 ftw">{{totalPrice}}</view></view>
+			<view class="payBtn" @click="submit">微信支付</view>
 		</view>
 		
 		<!-- 服务协议 -->
@@ -75,12 +77,9 @@
 				<view class="xqInfor fs13">
 					<scroll-view  class="cont" scroll-y="true" >
 						<view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
-							<view>1.解放路第三方个人管理供货方就是大概回房间号购房款规划局分雕刻时光</view>
+							<view class="content ql-editor" style="padding:0;"
+							v-html="artData.content">
+							</view>
 						</view>
 					</scroll-view>
 				</view>
@@ -94,24 +93,24 @@
 		<view class="xieyiShow payShow whiteBj radius10" v-show="is_payShow">
 			<view class="center pdtb15 color6">订单确认</view>
 			<!-- 未填信息 -->
-			<view class="">
+			<!-- <view class="">
 				<view class="borderB1"></view>
 				<view class="borderB1 flexCenter pdtb25">
 					请填写下单信息
 				</view>
 				<view class="center pdtb15 pubColor" @click="payShowShow">确认</view>
-			</view>
+			</view> -->
 			<!-- 显示下单信息 -->
 			<view class="">
 				<view class="borderB1"></view>
 				<view class="borderB1 pdlr4 pdt15 pdb15 fs13">
-					<view class="mgb10">下单姓名：唐久</view>
-					<view class="mgb10">下单电话：15623562356</view>
-					<view class="">下单地址：陕西省西安市雁塔区高新大都荟</view>
+					<view class="mgb10">下单姓名：{{addressData.name}}</view>
+					<view class="mgb10">下单电话：{{addressData.phone}}</view>
+					<view class="">下单地址：{{addressData.city+addressData.detail}}</view>
 				</view>
 				<view class="center flexRowBetween">
 					<view style="width: 50%; height: 100rpx;line-height: 100rpx;color:#ff6262 ;box-sizing: border-box;border-right: 1px solid #eee;" @click="payShowShow">重新输入</view>
-					<view style="width: 50%;height: 100rpx;line-height: 100rpx;" class="pubColor">确认</view>
+					<view style="width: 50%;height: 100rpx;line-height: 100rpx;" class="pubColor" @click="addOrder">确认</view>
 				</view>
 			</view>
 		</view>
@@ -120,7 +119,9 @@
 </template>
 
 <script>
+	import hTimePicker from "@/components/h-timePicker/h-timePicker.vue";
 	export default {
+		components: { hTimePicker },
 		data() {
 			return {
 				Router:this.$Router,
@@ -131,25 +132,358 @@
 				count:1,
 				is_xieyiShow:false,
 				isAgree:false,
-				is_payShow:false
+				is_payShow:false,
+				mainData:[],
+				submitData:{
+					passage1:'',
+				},
+				totalPrice:0,
+				pay:{},
+				time:'',
+				addressData:{},
+				userData:{},
+				distriData:[],
+				artData:{}
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.mainData = uni.getStorageSync('payPro');
+			if(options.shareUser){
+				self.shareUser = options.shareUser
+			};
+			self.$Utils.loadAll(['getUserData','getDistriData','getArtData'], self);
+			self.countTotalPrice()
 		},
+		
+		onShow() {
+			const self = this;
+			if(uni.getStorageSync('choosedAddressData')){
+				self.addressData = uni.getStorageSync('choosedAddressData')
+			}else{
+				self.getAddressData()
+			};
+		},
+		
 		methods: {
-			counter(type) {
-				const self = this;			
-				if (type == '+') {
-					self.count++;
-				} else {
-					if (self.count > 1) {
-						self.count--;
+			
+			getArtData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id:2
+				};
+				postData.getBefore = {
+					article:{
+						tableName:'Label',
+						middleKey:'menu_id',
+						key:'id',
+						searchItem:{
+							title: ['in', ['服务协议']],
+						},
+						condition:'in'
 					}
-				};			
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.artData = res.info.data[0];
+						const regex = new RegExp('<img', 'gi');
+						//const type = new RegExp('<img');
+						
+						self.artData.content = self.artData.content.replace(regex, `<img style="max-width: 100%;"`);
+						//self.artData.content = self.artData.content.replace(type, `<image`);
+						
+					};
+					console.log(self.artData.content)
+					self.$Utils.finishFunc('getArtData');
+				};
+				self.$apis.articleGet(postData, callback);
+			},
+			
+			getDistriData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					child_no:uni.getStorageSync('user_info').user_no
+				};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.distriData.push.apply(self.distriData,res.info.data)
+					};
+					
+					self.$Utils.finishFunc('getDistriData');
+				};
+				self.$apis.distriGet(postData, callback);
+			},
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.userData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserData');
+					
+				};
+				self.$apis.userGet(postData, callback);
+			},
+			
+			getAddressData() {
+				const self = this;		
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					isdefault:1
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.addressData = res.info.data[0];
+					}
+				};
+				self.$apis.addressGet(postData, callback);
+			},
+			
+			
+			
+			counter(type) {
+				const self = this;
+				if (type == '+') {
+					self.mainData[0].count++;
+				} else {
+					if (self.mainData[0].count > 1) {
+						self.mainData[0].count--;
+					}
+				};
 				self.countTotalPrice();
 			},
+			
+			countTotalPrice() {
+				const self = this;
+				self.totalPrice = 0;
+				for (var i = 0; i < self.mainData.length; i++) {
+					self.totalPrice += self.mainData[i].product.sku[self.mainData[i].skuIndex].price * self.mainData[i].count
+				};
+				var wxPay = parseFloat(self.totalPrice).toFixed(2)
+				//console.log('wxPay',wxPay)
+				if (wxPay > 0) {
+					self.pay.wxPay = {
+						price: wxPay,
+					};
+				} else {
+					delete self.pay.wxPay;
+				};
+				console.log(self.pay)
+			},
+			
+			submit() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				
+				
+				
+				if(JSON.stringify(self.addressData) == '{}'){
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请选择收货地址','none')
+					return
+				};
+				
+				if (!self.isAgree) {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请同意平台用户服务协议', 'none')
+					return
+				};
+				var data = {
+					snap_address: self.addressData,
+					shop_no:self.mainData[0].product.shop_no,
+					passage1:self.submitData.passage1
+				}
+				var orderList = [{
+					sku_id: self.mainData[0].sku_id,
+					count: self.mainData[0].count,
+					type: self.mainData[0].type,
+					data: data,
+					snap_address: self.addressData
+				}];
+				self.payShowShow(orderList)
+				//self.addOrder(orderList)
+				
+			},
+			
+			addOrder(orderList) {
+				const self = this;	
+				/* if(self.orderId){
+					self.goPay()
+					return
+				}; */
+				const postData = {}; 
+				postData.orderList = self.$Utils.cloneForm(self.orderList);
+				postData.data = {};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					uni.setStorageSync('canClick', true);
+					if (res && res.solely_code == 100000) {
+						self.orderId = res.info.id;
+						self.payShowShow()
+						self.goPay()
+					} else {		
+						uni.showToast({
+							title: res.msg,
+							duration: 2000
+						});
+					};		
+				};
+				self.$apis.addOrder(postData, callback);
+			},
+			
+			goPay(order_id) {
+				const self = this;	
+				uni.setStorageSync('canClick',false);
+				
+				const postData = self.$Utils.cloneForm(self.pay)	
+				postData.tokenFuncName = 'getProjectToken',
+				postData.searchItem = {
+					id: self.orderId
+				};	
+				postData.payAfter = [];
+				if(self.distriData.length>0){
+					for (var i = 0; i < self.distriData.length; i++) {
+						if(self.distriData[i].level==1){
+							console.log('self.distriData[i]',self.distriData[i])
+							postData.payAfter.push(
+								{
+									tableName: 'FlowLog',
+									FuncName: 'add',
+									data: {
+										count:parseFloat(self.mainData[0].product.class_one),
+										thirdapp_id:2,
+										status:1,
+										trade_info:'团队返佣',
+										type:2,
+										account:1,
+										behavior:2,
+										user_no:self.distriData[i].parent_no,
+										relation_user:uni.getStorageSync('user_info').user_no
+									},
+								}
+							)
+						}else if(self.distriData[i].level==2){
+							console.log('self.distriData[i]',self.distriData[i])
+							postData.payAfter.push(
+								{
+									tableName: 'FlowLog',
+									FuncName: 'add',
+									data: {
+										count:parseFloat(self.mainData[0].product.class_two),
+										thirdapp_id:2,
+										status:1,
+										trade_info:'团队返佣',
+										type:2,
+										account:1,
+										behavior:2,
+										user_no:self.distriData[i].parent_no,
+										relation_user:uni.getStorageSync('user_info').user_no
+									},
+								}
+							)
+						}
+					}
+				};
+				if(self.distriData.length==0&&self.shareUser){
+					postData.payAfter.push(
+						{
+							tableName: 'FlowLog',
+							FuncName: 'add',
+							data: {
+								count:parseFloat(self.mainData[0].product.class_one),
+								thirdapp_id:2,
+								status:1,
+								trade_info:'分享商品',
+								type:2,
+								account:1,
+								behavior:1,
+								user_no:self.shareUser,
+								relation_user:uni.getStorageSync('user_info').user_no
+							},
+						}
+					)
+				};
+				if(self.userData.primary_scope>10){
+					postData.payAfter.push(
+						{
+							tableName: 'FlowLog',
+							FuncName: 'add',
+							data: {
+								count:parseFloat(self.mainData[0].product.class_one),
+								thirdapp_id:2,
+								status:1,
+								trade_info:'购买商品',
+								type:2,
+								account:1,
+								behavior:1,
+								user_no:uni.getStorageSync('user_info').user_no,
+								relation_user:uni.getStorageSync('user_info').user_no
+							},
+						}
+					)
+				}
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						uni.setStorageSync('canClick', true);
+						if (res.info) {
+							const payCallback = (payData) => {
+								console.log('payData', payData)
+								if (payData == 1) {
+									uni.showToast({
+										title: '支付成功',
+										duration: 1000,
+										success: function() {
+											
+										}
+									});
+									setTimeout(function() {
+										
+										self.$Router.redirectTo({route:{path:'/pages/userOrder/userOrder'}})
+									}, 1000);
+								} else {
+									uni.setStorageSync('canClick', true);
+									uni.showToast({
+										title: '支付失败',
+										duration: 2000
+									});
+								};
+							};
+							self.$Utils.realPay(res.info, payCallback);
+						} else {
+							
+							uni.showToast({
+								title: '支付成功',
+								duration: 1000,
+								success: function() {
+									
+								}
+							});
+							setTimeout(function() {
+								
+								self.$Router.redirectTo({route:{path:'/pages/userOrder/userOrder'}})
+							}, 1000);
+						};
+					} else {
+						uni.setStorageSync('canClick', true);
+						uni.showToast({
+							title: res.msg,
+							duration: 2000
+						});
+					};
+				};
+				self.$apis.pay(postData, callback);
+			},
+			
 			seltAgree(){
 				const self = this;
 				self.isAgree = !self.isAgree 
@@ -159,8 +493,12 @@
 				self.is_show = !self.is_show
 				self.is_xieyiShow = !self.is_xieyiShow
 			},
-			payShowShow(){
+			
+			payShowShow(orderList){
 				const self = this;
+				if(orderList){
+					self.orderList = orderList
+				};
 				self.is_show = !self.is_show
 				self.is_payShow = !self.is_payShow
 			}

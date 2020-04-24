@@ -1,17 +1,17 @@
 <template>
 	<view>
 		<view class="myExtendTop flexColumn center pubBj white pr">
-			<view class="money ftw">437.1</view>
+			<view class="money ftw">{{userInfoData.all&&userInfoData.all.count!=0?userInfoData.all.count:'0.00'}}</view>
 			<view class="fs13 pdt10">总收益(元)</view>
 			
 		</view>
 		<view class="userBox2 flexRowBetween fs12">
 			<view class="child flexColumn">
-				<view class="fs18 ftw red mgb5">234</view>
+				<view class="fs18 ftw red mgb5">{{userInfoData.balance}}</view>
 				<view class="color6">可提现</view>
 			</view>
 			<view class="child flexColumn">
-				<view class="fs18 ftw mgb5">203.1</view>
+				<view class="fs18 ftw mgb5">{{userInfoData.hasCashOut&&userInfoData.hasCashOut.count!=0?userInfoData.hasCashOut.count:'0.00'}}</view>
 				<view class="color6">已提现</view>
 			</view>
 			<view class="child flexCenter">
@@ -25,25 +25,15 @@
 		</view>
 		
 		<view class="">
-			<view class="myRowBetween mglr4" v-show="num==1">
-				<view class="item flexRowBetween" v-for="(item,index) in spendData" :key="index">
+			<view class="myRowBetween mglr4">
+				<view class="item flexRowBetween" v-for="(item,index) in mainData" :key="index">
 					<view class="ll">
-						<view class="">购买商品</view>
-						<view class="fs12 color9">2020.01.17</view>
+						<view class="">{{item.trade_info}}</view>
+						<view class="fs12 color9">{{item.create_time}}</view>
 					</view>
-					<view class="rr red">+56</view>
+					<view class="rr red">{{item.count}}</view>
 				</view>
-			</view>
-			<view class="myRowBetween mglr4" v-show="num==2">
-				<view class="item flexRowBetween" v-for="(item,index) in spendData" :key="index">
-					<view class="ll">
-						<view class="">团队返佣</view>
-						<view class="fs12 color9">2020.01.18</view>
-					</view>
-					<view class="rr red">+20</view>
-				</view>
-			</view>
-			
+			</view>	
 		</view>
 		
 		
@@ -55,25 +45,119 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{},
 				num:1,
 				spendData:[{},{},{}],
-				is_show:false
+				userInfoData:{},
+				searchItem:{
+					thirdapp_id:2,
+					type:2,
+					behavior:1
+				},
+				mainData:[]
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getUserInfoData','getMainData'], self);
 		},
+		
 		methods: {
+			
+			getMainData(isNew) {
+				const self = this;
+				var now = new Date().getTime();
+				if(isNew){
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+					}else{
+						
+					};
+					self.$Utils.finishFunc('getMainData');
+						
+				};
+				self.$apis.flowLogGet(postData, callback);
+			},
+			
 			change(num){
 				const self = this;
 				if(num!= self.num){
-					self.num = num
+					self.num = num;
+					self.searchItem.behavior = self.num;
+					self.getMainData(true)
 				}
-			}
+			},
+			
+			getUserInfoData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					all: {
+						tableName: 'FlowLog',
+						searchItem: {
+							status:1,
+							type:2,
+						},
+						middleKey: 'user_no',
+						key: 'user_no',
+						condition: 'in',
+						compute:{
+						  count:[
+						    'sum',
+						    'count',
+						    {
+						      status:1,type:2,count:['>',0]
+						    }
+						  ]
+						},
+					},
+					hasCashOut: {
+						tableName: 'FlowLog',
+						searchItem: {
+							status:1,
+							type:2,
+							withdraw:1
+						},
+						middleKey: 'user_no',
+						key: 'user_no',
+						condition: 'in',
+						compute:{
+						  count:[
+						    'sum',
+						    'count',
+						    {
+						      status:1,type:2,withdraw:1
+						    }
+						  ]
+						},
+					},
+				}
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.userInfoData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');
+					
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
 			
 		}
 	};

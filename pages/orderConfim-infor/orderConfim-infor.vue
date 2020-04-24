@@ -10,23 +10,24 @@
 							<view>商家信息</view>
 						</view>
 						
-						<view class="fs14 pdtb15">【西安】29层云顶餐厅吃五星自助~仅178-2大2小抢悦豪自助餐~海鲜烧烤的號惬盛宴~使用7月底！菜品丰富！吃到扶墙走！</view>
+						<view class="fs14 pdtb15">{{mainData.orderItem&&mainData.orderItem[0]&&mainData.orderItem[0].snap_product&&
+						mainData.orderItem[0].snap_product.product?mainData.orderItem[0].snap_product.product.title:''}}</view>
 						<view class="borderB1"></view>
 						<view class="pdt15 fs12 color6">
 							<view class="iconText flex">
 								<view class="sIcon"><image src="../../static/images/confirml-icon1.png" mode=""></image></view>
-								<view class="msgText">商家地址：雁塔区长安中路金莎国际广场4楼</view>
+								<view class="msgText">商家地址：{{mainData.shopInfo&&mainData.shopInfo[0]?mainData.shopInfo[0].address:''}}</view>
 							</view>
 							<view class="iconText flex">
 								<view class="sIcon"><image src="../../static/images/confirml-icon2.png" mode=""></image></view>
-								<view class="msgText">商家电话：029-23562312</view>
+								<view class="msgText">商家电话：{{mainData.shopInfo&&mainData.shopInfo[0]?mainData.shopInfo[0].phone:''}}</view>
 							</view>
 						</view>
 					</view>
 					
 					<view class="item">
 						<view class="flex titIcon">
-							<view class="icon"><image src="../../static/images/confirml-icon3.png" mode=""></image></view>
+							<view class="icon"><image :src="mainData.qrcode?mainData.qrcode:''" mode=""></image></view>
 							<view>二维码</view>
 						</view>
 						<view class="pdt15 flexCenter">
@@ -40,12 +41,12 @@
 							<view class="icon"><image src="../../static/images/confirml-icon4.png" mode=""></image></view>
 							<view>预约备注</view>
 						</view>
-						<view class="mgt15">周内无需预约，周末需要提前2小时短信网址预约</view>
+						<view class="mgt15">{{mainData.passage1!=''?mainData.passage1:'无备注信息'}}</view>
 					</view>
 					<view class="item">
 						<view class="flexRowBetween dashedB1 pdb15">
-							<view class="red ftw fs15">电子码：5623561254225</view>
-							<view class="dzEWM"><image src="../../static/images/confirml-img1.png" mode=""></image></view>
+							<view class="red ftw fs15">电子码：{{mainData.order_no}}</view>
+							<view class="dzEWM"><image :src="mainData.qrcode?mainData.qrcode:''" mode=""></image></view>
 						</view>
 						<view class="pdt15 fs13">未核销</view>
 					</view>
@@ -57,24 +58,24 @@
 						<view class="mgt15 fs12">
 							<view class="msgLine flex">
 								<view class="color9 msgtit">用户姓名</view>
-								<view class="msgTex">张思德</view>
+								<view class="msgTex">{{mainData.name!=''?mainData.name:''}}</view>
 							</view>
 							<view class="msgLine flex">
 								<view class="color9 msgtit">用户电话</view>
-								<view class="msgTex">158****2356</view>
+								<view class="msgTex">{{mainData.phone!=''?mainData.phone:''}}</view>
 							</view>
 							<view class="msgLine flex">
 								<view class="color9 msgtit">购买数量</view>
-								<view class="msgTex">1</view>
+								<view class="msgTex">{{mainData.count!=''?mainData.count:''}}</view>
 							</view>
-							<view class="msgLine flex">
+							<!-- <view class="msgLine flex">
 								<view class="color9 msgtit">开始核销时间</view>
 								<view class="msgTex">2020年3月27日</view>
 							</view>
 							<view class="msgLine flex">
 								<view class="color9 msgtit">有效日期</view>
 								<view class="msgTex">2020年3月27日-2020年6月27日</view>
-							</view>
+							</view> -->
 						</view>
 					</view>
 				</view>
@@ -89,17 +90,58 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{},
-				is_show:false
+				mainData:{}
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.id  = options.id;
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
+			
+			getMainData() {
+				const self = this;
+				console.log(2323434)
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					id:self.id
+				};
+				postData.getAfter = {
+					orderItem:{
+						tableName:'OrderItem',
+						middleKey:'order_no',
+						key:'order_no',
+						searchItem:{
+							status:1
+						},
+						condition:'='
+					},
+					shopInfo:{
+						tableName:'UserInfo',
+						middleKey:'shop_no',
+						key:'user_no',
+						searchItem:{
+							status:1
+						},
+						condition:'='
+					},
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.mainData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getMainData');
+					
+				};
+				self.$apis.orderGet(postData, callback);
+			},
+			
 		}
 	};
 </script>

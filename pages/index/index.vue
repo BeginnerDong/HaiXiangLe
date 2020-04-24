@@ -3,43 +3,44 @@
 		
 		<view class="userTit fs13 flexRowBetween whiteBj">
 			<view class="flex">
-				<view class="userPhoto mgr10"><image src="../../static/images/home-img.png" mode=""></image></view>
-				<view>快乐的猫</view>
+				<view class="userPhoto mgr10"><image :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image></view>
+				<view>{{userData.nickname}}</view>
 			</view>
-			<view class="flexEnd">西安站</view>
+			<view class="flexEnd" @click="flowLogAdd">西安站</view>
 		</view>
 		<view class="userTitH"></view>
 		
 		<view class="pdlr4">
 			<view class="proList">
-				<view class="item boxShaow" v-for="(item,index) in proData" :key="index" @click="Router.navigateTo({route:{path:'/pages/detail/detail'}})">
-					<view class="xsNum">销售量：662</view>
+				<view class="item boxShaow" v-for="(item,index) in mainData" :key="index" :data-id="item.id"
+				@click="Router.navigateTo({route:{path:'/pages/detail/detail?id='+$event.currentTarget.dataset.id}})">
+					<view class="xsNum">销售量：{{item.sale_count}}</view>
 					<view class="pic">
-						<image src="../../static/images/home-img1.png" mode=""></image>
+						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
 					</view>
-					<view class="tit borderB1">美食接发大水考虑价格就过来就是大概工人更进反馈聊到几个大概就分类三都感觉刚放假东立国际割发代首卡啦啦啦</view>
+					<view class="tit borderB1">{{item.title}}</view>
 					<view class="infor">
 						<view class="flexRowBetween">
 							<view class="ll">
 								<view class="flex">
-									<view class="price fs16 ftw mgr5">165.99</view>
-									<view class="yuanJia fs10 color9">门市价￥230</view>
+									 <view class="price fs16 ftw mgr5">{{item.price}}</view>
+									<view class="yuanJia fs10 color9">门市价￥{{item.o_price}}</view>
 								</view>
-								<view class="flex fyBtn fs10 mgt5">
+								<view class="flex fyBtn fs10 mgt5" v-if="userData.primary_scope>10">
 									<view class="btn mgr10 flex">
 										<view class="tt">返佣</view>
-										<view class="fyNmy">￥23</view>
+										<view class="fyNmy">￥{{item.class_one}}</view>
 									</view>
 									<view class="btn red flex">
 										<view class="tt">返佣</view>
-										<view class="fyNmy">￥13</view>
+										<view class="fyNmy">￥{{item.class_two}}</view>
 									</view>
 								</view>
 							</view>
 							<view class="rr">
-								<view class="buyBtn green"  v-show="item.is_buyGreen">抢购中</view>
-								<view class="buyBtn red" v-show="item.is_buyRed">预售</view>
-								<view class="buyBtn gray" v-show="item.is_buyGray">已售罄</view>
+								<view class="buyBtn green"  v-show="item.is_Buying&&!item.is_noStock">抢购中</view>
+								<view class="buyBtn red" v-show="item.is_notBuying&&!item.is_noStock">预售</view>
+								<view class="buyBtn gray" v-show="item.is_noStock">已售罄</view>
 							</view>
 						</view>
 					</view>
@@ -81,25 +82,152 @@
 				Router:this.$Router,
 				is_show: false,
 				wx_info:{},
-				proData:[
-					{is_buyGreen:true},
-					{is_buyRed:true},
-					{is_buyGray:true}
-				]
+				
+				userData:{},
+				mainData:[]
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			console.log('222',options);
+			
+			self.$Utils.loadAll(['getUserData','getMainData'], self);
+			
+			
 		},
+		
+		
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
-			getMainData() {
+			
+			flowLogAdd() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.data = {
+					count:10000,
+					thirdapp_id:2,
+					status:1,
+					trade_info:'赠送',
+					type:3,
+					account:1,
+				};
+				const callback = (data) => {				
+					if (data.solely_code == 100000) {					
+						
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(data.msg, 'none', 1000)
+					}	
+				};
+				self.$apis.flowLogAdd(postData, callback);
+			},
+			
+			tokenGet() {
+				const self = this;
+				const postData = {
+					searchItem: {
+						user_no: 'U411908080398720'
+					}
+				};
+				console.log('postData', postData)
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						self.userData = res.info;
+						uni.setStorageSync('user_token', res.token);
+						uni.setStorageSync('user_no', res.info.user_no);
+						uni.setStorageSync('user_info', res.info);
+						var time = parseInt(new Date().getTime()) + 3500000;
+						uni.setStorageSync('token_expire_time',time);
+					}
+					console.log('res', res)
+					self.$Utils.finishFunc('tokenGet');
+				};
+				self.$apis.tokenGet(postData, callback);
+			},
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.userData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserData');
+					
+				};
+				self.$apis.userGet(postData, callback);
+			},
+			
+			
+			getMainData(isNew) {
+				const self = this;
+				var now = new Date().getTime();
+				if(isNew){
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
+				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id: 2,
+					start_time: ['<', now],
+				};
+				postData.getAfter = {
+					sku: {
+						tableName: 'Sku',
+						middleKey: 'product_no',
+						key: 'product_no',
+						condition: '=',
+						searchItem: {
+							status: 1
+						}
+					}
+				};
+				postData.order = {
+					create_time: 'desc'
+				};
+				const callback = (res) => {
+					
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+						for (var i = 0; i < self.mainData.length; i++) {
+							if(self.mainData[i].stock==0||self.mainData[i].sellout==1){
+								self.mainData[i].is_noStock = true
+							};
+							if(parseInt(self.mainData[i].end_time)>now){
+								self.mainData[i].is_notBuying = true
+							}else{
+								self.mainData[i].is_Buying = true
+							}
+						}
+					}else{
+						
+					};
+					self.$Utils.finishFunc('getMainData');
+						
+				};
+				self.$apis.productGet(postData, callback);
+			},
 		}
 	};
 </script>

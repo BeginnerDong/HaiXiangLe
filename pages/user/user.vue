@@ -5,10 +5,10 @@
 			<view class="headbj"><image src="../../static/images/about-img.png" mode=""></image></view>
 			<view class="infor radius10 boxShaow whiteBj">
 				<view class="flexCenter">
-					<image class="photo" src="../../static/images/about-img1.png" mode=""></image>
+					<image class="photo" :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image>
 				</view>
 				
-				<view class="center mgt5">快乐的猫</view>
+				<view class="center mgt5">{{userData.nickname}}</view>
 				<view class="userBox2 flexRowBetween color6 fs12 mgt20 center">
 					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
 						<view class="icon">
@@ -16,19 +16,19 @@
 						</view>
 						<view>全部订单</view>
 					</view>
-					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
+					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=2'}})">
 						<view class="icon">
 							<image src="../../static/images/about-icon1.png"></image>
 						</view>
 						<view>已支付</view>
 					</view>
-					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
+					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=3'}})">
 						<view class="icon">
 							<image src="../../static/images/about-icon2.png"></image>
 						</view>
 						<view>已预约</view>
 					</view>
-					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
+					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=4'}})">
 						<view class="icon">
 							<image src="../../static/images/about-icon3.png"></image>
 						</view>
@@ -40,21 +40,21 @@
 		</view>
 		
 		<view class="myRowBetween fs13 mglr4 whiteBj radius10 mgt15">
-			<view class="item flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/user-myMoney/user-myMoney'}})" >
+			<view class="item flexRowBetween" v-if="userData.primary_scope>10" @click="Router.navigateTo({route:{path:'/pages/user-myMoney/user-myMoney'}})" >
 				<view class="ll flex">
 					<image class="icon" src="../../static/images/about-icon4.png" mode=""></image>
 					<view>我的金库</view>
 				</view>
 				<view class="rr"><image class="arrowR" src="../../static/images/about-icon10.png" mode=""></image></view>
 			</view>
-			<view class="item flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/user-myInviteCode/user-myInviteCode'}})" >
+			<view class="item flexRowBetween" v-if="userData.primary_scope>10" @click="Router.navigateTo({route:{path:'/pages/user-myInviteCode/user-myInviteCode'}})" >
 				<view class="ll flex">
 					<image class="icon" src="../../static/images/about-icon5.png" mode=""></image>
 					<view>我的邀请码</view>
 				</view>
 				<view class="rr"><image class="arrowR" src="../../static/images/about-icon10.png" mode=""></image></view>
 			</view>
-			<view class="item flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/user-myTeam/user-myTeam'}})" >
+			<view class="item flexRowBetween" v-if="userData.primary_scope>10" @click="Router.navigateTo({route:{path:'/pages/user-myTeam/user-myTeam'}})" >
 				<view class="ll flex">
 					<image class="icon" src="../../static/images/about-icon6.png" mode=""></image>
 					<view>我的团队</view>
@@ -117,16 +117,52 @@
 				Router:this.$Router,
 				showView: false,
 				score:'',
-				wx_info:{}
+				wx_info:{},
+				userData:{}
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getUserData'], self);
 		},
 		methods: {
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					if (res.solely_code == 100000&&res.info.data[0]) {
+						self.userData = res.info.data[0]
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserData');
+					
+				};
+				self.$apis.userGet(postData, callback);
+			},
 
-
+			/* tokenGet() {
+				const self = this;
+				const postData = {
+					searchItem: {
+						user_no: 'U411908080398720'
+					}
+				};
+				console.log('postData', postData)
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						self.userData = res.info;
+						uni.setStorageSync('user_token', res.token);
+						uni.setStorageSync('user_no', res.info.user_no);
+						uni.setStorageSync('user_info', res.info);
+					}
+					console.log('res', res)
+					self.$Utils.finishFunc('tokenGet');
+				};
+				self.$apis.tokenGet(postData, callback);
+			}, */
 		},
 	};
 </script>
