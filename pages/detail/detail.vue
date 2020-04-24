@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<div id="poster" style="z-index:-999;position: absolute;">
+		<div id="poster" style="z-index:-999;position: absolute;left: 0;top: 0;right: 0;">
 			<div class="img">
 				<img class="img-one" crossOrigin="anonymous" :src="mainData.posterImg&&mainData.posterImg[0]?mainData.posterImg[0].url+'?'+new Date().getTime():''"
 				 style="width:100%;height:100%" />
@@ -17,7 +17,7 @@
 			<img :src="url" style="width:100%;height:100%" />
 			
 		</div>
-		<view class="userTit fs13 whiteBj">
+		<view class="userTit fs13 whiteBj boxShaow">
 			<view class="flex">
 				<view class="userPhoto mgr10"><image :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image></view>
 				<view>{{userData.nickname}}</view>
@@ -414,6 +414,7 @@
 	@import "../../assets/style/detail.css";
 	
 	page{padding-bottom:140rpx;}
+	view{box-sizing: border-box;}
 	.shareBtn{width: 160rpx;height: 60rpx;text-align: center;color: #fff;line-height: 60rpx;border-radius: 30rpx 0 0 30rpx;position: absolute;top: 78rpx;right: 0;z-index: 1;background: #86E2B1;}
 	.swiper-box {height: 400rpx;box-sizing: border-box;overflow: hidden;}
 	.swiper-box swiper-item{width: 100%;box-sizing: border-box;overflow: hidden;}
@@ -428,13 +429,13 @@
 	.kefuShow{width: 80%;min-height: 300rpx;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);z-index: 50;box-sizing: border-box;padding: 80rpx 30rpx;}
 	.kefuShow .ewm{width: 200rpx;height: 200rpx;}
 	.img{
-		width: 375px;
-		height: 665px;
+		width: 100%;
+		height: 1330rpx;
 	}
 	.img-one{
-		width: 165px;
-		height: 235x;
-		margin-left: 15px;
+		width: 100%;
+		height: 100%;
+		/* margin-left: 15px; */
 	}
 	.imgb{
 		width: 60px;

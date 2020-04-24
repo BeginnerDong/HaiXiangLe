@@ -1,7 +1,7 @@
 <template>
 	<view>
 		
-		<view class="userTit fs13 flexRowBetween whiteBj">
+		<view class="userTit fs13 flexRowBetween whiteBj boxShaow">
 			<view class="flex">
 				<view class="userPhoto mgr10"><image :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image></view>
 				<view>{{userData.nickname}}</view>
@@ -93,7 +93,7 @@
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			console.log('222',options);
 			
-			self.$Utils.loadAll(['getUserData','getMainData'], self);
+			self.$Utils.loadAll(['tokenGet','getMainData'], self);
 			
 			
 		},

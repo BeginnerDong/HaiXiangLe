@@ -517,7 +517,7 @@
 	
 	
 	.beizhu{width: 85%;}
-	.beizhu input{width: 100%;height: 40rpx;line-height: 40px;font-size: 26rpx;color: #666;}
+	.beizhu input{width: 100%;height: 40rpx;line-height: 40rpx;font-size: 26rpx;color: #666;display: block;margin: 0;padding: 0;}
 	
 	.seltIcon{width: 30rpx;height: 30rpx;}
 	
