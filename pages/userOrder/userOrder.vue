@@ -133,6 +133,7 @@
 						self.searchItem.type=1
 						self.searchItem.transport_status=['in',[0,1]]
 					}else{
+						delete self.searchItem.type;
 						self.searchItem.transport_status=2
 					}
 					self.getMainData(true)

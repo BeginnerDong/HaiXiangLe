@@ -74,13 +74,13 @@
 		
 		onReady() {
 			const self = this;
-			self.$Utils.loadAll(['wxJsSdk'], self);
+			//self.$Utils.loadAll(['wxJsSdk'], self);
 		},
 		
 		onLoad(options) {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			
+			self.$Utils.loadAll(['wxJsSdk'], self);
 		},
 		
 		onShow() {
@@ -100,7 +100,7 @@
 					success: function(res) {
 						var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
 						console.log('result', result)
-						self.Router.navigateTo({route:{path:'/pages/business-orderHX/business-orderHX?id='+res.result}})
+						self.Router.navigateTo({route:{path:'/pages/business-orderHX/business-orderHX?id='+result}})
 					}
 				});
 			},
@@ -109,7 +109,7 @@
 				const self = this;
 				const postData = {
 					thirdapp_id: 2,
-					url: window.location.href
+					url: location.href.split('#')[0]
 				};
 				const callback = (res) => {
 					self.$jweixin.config({

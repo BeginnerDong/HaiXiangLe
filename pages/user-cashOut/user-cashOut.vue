@@ -10,7 +10,7 @@
 				<input class="inputEdit" type="text" v-model="submitData.count" placeholder="请输入提现金额" />
 			</view>
 			<view class="submitbtn mgt15">
-				<view class="Wbtn" @click="txAlertShow">申请提现</view>
+				<view class="Wbtn" @click="submit">申请提现</view>
 			</view>
 			<view class="fs12">
 				<view class="flexCenter mgt20">
@@ -34,7 +34,7 @@
 			</view>
 			<view class="flexRowBetween">
 				<view style="width: 50%; height: 100rpx;line-height: 100rpx;box-sizing: border-box;border-right: 1px solid #eee;" @click="txAlertShow">取消</view>
-				<view style="width: 50%;height: 100rpx;line-height: 100rpx;" class="pubColor" @click="submit">确认提现</view>
+				<view style="width: 50%;height: 100rpx;line-height: 100rpx;" class="pubColor" @click="flowLogAdd">确认提现</view>
 			</view>
 		</view>
 		
@@ -113,9 +113,9 @@
 				const self = this;
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken'
-				if(!wx.getStorageSync('user_info')||!wx.getStorageSync('user_info').headImgUrl){
+				/* if(!wx.getStorageSync('user_info')||!wx.getStorageSync('user_info').headImgUrl){
 				  postData.refreshToken = true;
-				};
+				}; */
 				postData.data = {
 					count:-self.submitData.count,
 					thirdapp_id:2,
@@ -130,9 +130,7 @@
 					if (data.solely_code == 100000) {					
 						self.$Utils.showToast('提交成功', 'none');
 						setTimeout(function() {
-							uni.navigateBack({
-								delta:1
-							})
+							self.Router.redirectTo({route:{path:'/pages/user/user'}})
 						}, 800)
 					} else {
 						uni.setStorageSync('canClick', true);

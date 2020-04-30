@@ -10,10 +10,10 @@ import $AssetsConfig from './config/assets.config.js'
 import $RoutesConfig from './config/routes.config.js'
 import $ConstDataConfig from './config/constData.config.js'
 import $modalHelper from './common/modalHelper.js'
-
+//import Vconsole from './common/vconsole.min.js'
 var jweixin = require('jweixin-module')
 
-
+//Vue.prototype.$vConsole = new Vconsole()
 Vue.prototype.$store = store
 Vue.prototype.$Utils = $Utils
 Vue.prototype.$apis = $apis

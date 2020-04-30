@@ -6,20 +6,20 @@
 				<view class="item">
 					<view class="fs12 flexRowBetween mgb10">
 						<view class="color6">交易时间：{{mainData.create_time}}</view>
-						<view class="red">{{item.transport_status==0?'待核销':'已核销'}}</view>
+						<view class="red">{{mainData.transport_status==0?'待核销':'已核销'}}</view>
 					</view>
 					<view class="flexRowBetween">
 						<view class="pic">
-							<image :src="item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&item.orderItem[0].snap_product.product&&
-							item.orderItem[0].snap_product.product.mainImg&&item.orderItem[0].snap_product.product.mainImg[0]?item.orderItem[0].snap_product.product.mainImg[0].url:''" mode=""></image>
+							<image :src="mainData.orderItem&&mainData.orderItem[0]&&mainData.orderItem[0].snap_product&&mainData.orderItem[0].snap_product.product&&
+							mainData.orderItem[0].snap_product.product.mainImg&&mainData.orderItem[0].snap_product.product.mainImg[0]?mainData.orderItem[0].snap_product.product.mainImg[0].url:''" mode=""></image>
 						</view>
 						<view class="infor">
-							<view class="avoidOverflow2 fs14">{{item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&
-						item.orderItem[0].snap_product.product?item.orderItem[0].snap_product.product.title:''}}</view>
-							<view class=" fs12 color6">{{item.title}}</view>
+							<view class="avoidOverflow2 fs14">{{mainData.orderItem&&mainData.orderItem[0]&&mainData.orderItem[0].snap_product&&
+						mainData.orderItem[0].snap_product.product?mainData.orderItem[0].snap_product.product.title:''}}</view>
+							<view class=" fs12 color6">{{mainData.title}}</view>
 							<view class="B-price flexRowBetween">
-								<view class="price fs15 ftw">{{item.price}}</view>
-								<view class="fs13">×{{item.count}}</view>
+								<view class="price fs15 ftw">{{mainData.price}}</view>
+								<view class="fs13">×{{mainData.count}}</view>
 							</view>
 						</view>
 					</view>
@@ -30,11 +30,11 @@
 				<view class="pdtb15 fs13">
 					<view class="iconText flex">
 						<view class="color6 mgr15">姓名</view>
-						<view>{{item.name}}</view>
+						<view>{{mainData.name}}</view>
 					</view>
 					<view class="iconText flex">
 						<view class="color6 mgr15">电话</view>
-						<view>{{item.phone}}</view>
+						<view>{{mainData.phone}}</view>
 					</view>
 				</view>
 			</view>
@@ -54,13 +54,15 @@
 			return {
 				Router:this.$Router,
 				Utils:this.$Utils,
-				mainData:{}
+				mainData:{},
+				id:''
 			}
 		},
 		
 		onLoad(options) {
 			const self = this;
-			self.id = options.id;
+			var options = self.$Utils.getHashParameters();
+			self.id = options[0].id;
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		
@@ -96,7 +98,7 @@
 			
 			getMainData() {
 				const self = this;
-				console.log('852369')
+				console.log('852369',self.id)
 				const postData = {
 					searchItem:{
 						id:self.id,
@@ -110,22 +112,26 @@
 						middleKey:'order_no',
 						key:'order_no',
 						searchItem:{
-							status:1
+							status:1,
+							user_type:0
 						},
 						condition:'='
 					},
 				};
+				console.log('postData',postData)
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
 					} else {
 						self.$Utils.showToast(res.msg, 'none');
+						
 						setTimeout(function() {
 							uni.navigateBack({
 								delta:1
 							})
 						}, 1000);
 					};
+					console.log('self.mainData',self.mainData)
 					self.$Utils.finishFunc('getMainData');
 				};
 				self.$apis.orderGet(postData, callback);

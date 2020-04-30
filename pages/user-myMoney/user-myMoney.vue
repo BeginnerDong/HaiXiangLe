@@ -15,7 +15,7 @@
 				<view class="color6">已提现</view>
 			</view>
 			<view class="child flexCenter">
-				<view class="txBtn white pubBj"  @click="Router.navigateTo({route:{path:'/pages/user-cashOut/user-cashOut'}})">提现</view>
+				<view class="txBtn white pubBj"  @click="Router.redirectTo({route:{path:'/pages/user-cashOut/user-cashOut'}})">提现</view>
 			</view>
 		</view>
 		

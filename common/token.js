@@ -124,8 +124,8 @@ class Token {
                 code:param.code,
             };
 			
-			if(param.parent_no){
-				postData.parent_no = param.parent_no
+			if(param.shareUser){
+				postData.parent_no = param.shareUser
 			};
 			
 			if(param.user_no){

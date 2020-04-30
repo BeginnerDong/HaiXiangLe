@@ -170,7 +170,7 @@
 		
 		onReady() {
 			const self = this;
-			self.$Utils.loadAll(['wxJsSdk'], self);
+			//self.$Utils.loadAll(['wxJsSdk'], self);
 		},
 		
 		onShow() {
@@ -185,7 +185,7 @@
 				const self = this;
 				const postData = {
 					thirdapp_id: 2,
-					url: window.location.href
+					url: location.href.split('#')[0]
 				};
 				const callback = (res) => {
 					self.$jweixin.config({
@@ -269,16 +269,20 @@
 			
 			openMap(){
 				const self = this;
-				
-				self.$jweixin.openLocation({
-				    latitude: parseFloat(self.mainData.shop[0].latitude),
-				    longitude: parseFloat(self.mainData.shop[0].longitude),
-					name:'',
-					address:self.mainData.shop[0].address,
-				    success: function () {
-				        console.log('success');
-				    }
-				});
+				if(parseFloat(self.mainData.shop[0].latitude)&&parseFloat(self.mainData.shop[0].latitude)>0&&parseFloat(self.mainData.shop[0].longitude)&&parseFloat(self.mainData.shop[0].longitude)>0){
+					self.$jweixin.openLocation({
+					    latitude: parseFloat(self.mainData.shop[0].latitude),
+					    longitude: parseFloat(self.mainData.shop[0].longitude),
+						address:self.mainData.shop[0].address,
+					    success: function () {
+					        console.log('success');
+					    }
+					});
+				}else{
+					uni.showToast({
+						title:'经纬度设置错误'
+					})
+				}
 			},
 			
 			phoneCall(){

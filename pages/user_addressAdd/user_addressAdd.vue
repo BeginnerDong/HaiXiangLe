@@ -10,14 +10,14 @@
 			<view class="item flexRowBetween pdtb15 borderB1">
 				<view class="ll">手机号</view>
 				<view class="rr fs13" >
-					<input type="number" v-model="submitData.phone" placeholder="请输入手机号" placeholder-class="placeholder">
+					<input type="number" maxlength="11" v-model="submitData.phone" placeholder="请输入手机号" placeholder-class="placeholder">
 				</view>
 			</view>	
 			<view class="item flexRowBetween pdtb15 borderB1">
 				<view class="ll">所在地区</view>
 				<view class="rr fs13 color9" @click="showMulLinkageThreePicker">
 					<input type="text" placeholder="选择您的位置" disabled="true"   v-model="submitData.city">
-					<image class="arrowR" src="../../static/images/detailsl-icon2.png" mode=""></image>
+					<image class="arrowR" style="width: 19px;" src="../../static/images/detailsl-icon2.png" mode=""></image>
 				</view>
 			</view>	
 			<view class="item flexRowBetween pdtb15 borderB1">
