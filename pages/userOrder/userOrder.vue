@@ -158,7 +158,13 @@
 			
 			toDetail(index){
 				const self = this;
-				self.Router.navigateTo({route:{path:'/pages/detail/detail?id='+self.mainData[index].orderItem[0].snap_product.product.id}})
+				if(self.mainData[index].type==1){
+					self.Router.navigateTo({route:{path:'/pages/orderConfim-infor/orderConfim-infor?id='+self.mainData[index].id}})
+				}else if(self.mainData[index].type==2){
+					self.Router.navigateTo({route:{path:'/pages/userOrderDetail/userOrderDetail?id='+self.mainData[index].id}})
+				}
+				
+				
 			},
 			
 			changeCurr(curr){

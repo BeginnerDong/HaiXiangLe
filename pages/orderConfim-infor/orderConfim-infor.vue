@@ -10,7 +10,7 @@
 							<view>商家信息</view>
 						</view>
 						
-						<view class="fs14 pdtb15">{{mainData.orderItem&&mainData.orderItem[0]&&mainData.orderItem[0].snap_product&&
+						<view class="fs14 pdtb15" @click="Router.redirectTo({route:{path:'/pages/detail/detail?id='+mainData.orderItem[0].snap_product.product.id}})">{{mainData.orderItem&&mainData.orderItem[0]&&mainData.orderItem[0].snap_product&&
 						mainData.orderItem[0].snap_product.product?mainData.orderItem[0].snap_product.product.title:''}}</view>
 						<view class="borderB1"></view>
 						<view class="pdt15 fs12 color6">
