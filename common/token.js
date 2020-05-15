@@ -74,7 +74,7 @@ class Token {
 		console.log('getWeixinToken',callback)
 		var orginHref =  window.location.origin + window.location.pathname;
 		//var href = 'http://test.solelycloud.com/gouxuanweb/'
-	
+		console.log('href-before',href);
         var param = $Utils.getHashParameters()[0];
         var hash = $Utils.getHashParameters()[1]; 
 		console.log('param',param)

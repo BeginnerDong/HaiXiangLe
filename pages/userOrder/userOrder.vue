@@ -18,11 +18,11 @@
 					<view class="item" v-for="(item,index) in mainData" :key="index">
 						<view class="fs12 flexRowBetween mgb10">
 							<view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red" v-if="item.type==2">已付款</view>
-							<view class="red" v-if="item.type==1">已预约</view>
+							<view class="red" v-if="item.type==2&&item.transport_status!=2">已付款</view>
+							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
 							<view class="red" v-if="item.transport_status==2">已完成</view>
 						</view>
-						<view class="flexRowBetween">
+						<view class="flexRowBetween"  @click="toDetail(index)">
 							<view class="pic">
 								<image :src="item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&item.orderItem[0].snap_product.product&&
 							item.orderItem[0].snap_product.product.mainImg&&item.orderItem[0].snap_product.product.mainImg[0]?item.orderItem[0].snap_product.product.mainImg[0].url:''" mode=""></image>
@@ -118,6 +118,11 @@
 		},
 		
 		methods: {
+			
+			toDetail(index){
+				const self = this;
+				self.Router.navigateTo({route:{path:'/pages/detail/detail?id='+self.mainData[index].orderItem[0].snap_product.product.id}})
+			},
 			
 			changeCurr(curr){
 				const self = this;

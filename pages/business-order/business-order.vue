@@ -50,7 +50,9 @@
 		
 		<!-- 无数据 -->
 		<view class="nodata" v-if="mainData.length==0"><image src="../../static/images/nodata.png" mode=""></image></view>
-		
+		<view class="submitbtn">
+			<view class="btn" @click="loginOff" style="position: fixed;margin-left: 10%;bottom: 10%;">退出登录</view>
+		</view>
 	</view>
 </template>
 
@@ -90,7 +92,12 @@
 		
 		methods: {
 			
-			
+			loginOff(){
+				const self = this;
+				uni.removeStorageSync('staffInfo');
+				uni.removeStorageSync('staffToken');
+				self.Router.redirectTo({route:{path:'/pages/user/user'}})
+			},
 			
 			scan() {
 				const self = this;

@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<div id="poster" style="z-index:-999;position: absolute;left: 0;top: 0;right: 0;">
-			<div class="img">
+			<div class="img" :style="'height:'+windowHeight+'px'">
 				<img class="img-one" crossOrigin="anonymous" :src="mainData.posterImg&&mainData.posterImg[0]?mainData.posterImg[0].url+'?'+new Date().getTime():''"
 				 style="width:100%;height:100%" />
 				<!-- <img class="img-one" src="../../static/images/达人/img2.png" /> -->
@@ -12,11 +12,11 @@
 			</div>
 		</div>
 		
-		<div style="width:100%;height:100%;position:fixed;top:0;background:black;opacity:0.6;z-index:666" v-if="showPoster"></div>
+		<!-- <div style="width:100%;height:100%;position:fixed;top:0;background:black;opacity:0.6;z-index:666" v-if="showPoster"></div>
 		<div style="z-index:999;width:80%;height:80%;position: fixed;top: 10%;left:10%" v-if="showPoster">
 			<img :src="url" style="width:100%;height:100%" />
 			
-		</div>
+		</div> -->
 		<view class="userTit fs13 whiteBj boxShaow">
 			<view class="flex">
 				<view class="userPhoto mgr10"><image :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image></view>
@@ -25,7 +25,7 @@
 		</view>
 		<view class="userTitH"></view>
 		<view class="banner-box pr">
-			<view class="shareBtn" @click="url==''?getQrData():ifShowPoster()" v-if="userData.primary_scope>10">会员分享</view>
+			<view class="shareBtn" @click="getQrData" v-if="userData.primary_scope>10">会员分享</view>
 			<swiper class="swiper-box" indicator-dots="true" autoplay="true" interval="3000" duration="1000" indicator-active-color="#86e2b1">
 				<block v-for="(item,index) in mainData.bannerImg" :key="index">
 					<swiper-item class="swiper-item">
@@ -143,7 +143,8 @@
 				kefuData:{},
 				showPoster: false,
 				url: '',
-				QrData:{}
+				QrData:{},
+				windowHeight:0
 			}
 		},
 		
@@ -166,6 +167,12 @@
 			}
 			console.log('self.id',self.id)
 			console.log('self.shareUser',self.shareUser)
+			uni.getSystemInfo({
+			    success: function (res) {
+			       
+					self.windowHeight = res.windowHeight
+			    }
+			});
 		},
 		
 		onReady() {
@@ -213,6 +220,13 @@
 			
 			getQrData() {
 				const self = this;
+				uni.showLoading();
+				if(self.url!=''){
+					uni.hideLoading();
+					uni.previewImage({
+						urls:[self.url]
+					})	
+				};
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
 				postData.param = 'http://test.solelyfinance.com/wx/?shareUser=' + uni.getStorageSync(
@@ -222,20 +236,24 @@
 					console.log(res);
 					self.QrData = res.info;
 					console.log(9990, self.QrData)
-					html2canvas(document.getElementById("poster"), {
-						width: 375,
-						height: 665,
-						useCORS: true,
-						allowTaint: false,
-						taintTest: true,
-					}).then(function(canvas) {
-						var imgUrl = canvas.toDataURL();
-						self.url = imgUrl;
-						console.log('self.url', self.url)
-			
-			
-					});
-					self.showPoster = true
+					setTimeout(function() {
+						html2canvas(document.getElementById("poster"), {
+							
+							useCORS: true,
+							allowTaint: false,
+							taintTest: true,
+							logging: true,
+						}).then(function(canvas) {
+							var imgUrl = canvas.toDataURL();
+							self.url = imgUrl;
+							console.log('self.url', self.url)
+							uni.hideLoading();
+							uni.previewImage({
+								urls:[self.url]
+							})	
+						});
+					}, 500);
+					
 			
 				};
 				self.$apis.getQrCommonCode(postData, callback);
@@ -434,7 +452,6 @@
 	.kefuShow .ewm{width: 200rpx;height: 200rpx;}
 	.img{
 		width: 100%;
-		height: 1330rpx;
 	}
 	.img-one{
 		width: 100%;

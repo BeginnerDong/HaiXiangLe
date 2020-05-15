@@ -80,6 +80,7 @@
 					id:self.id,
 					user_type:0
 				};
+				
 				const callback = (data) => {
 					uni.setStorageSync('canClick', true);
 					if (data && data.solely_code == 100000) {
@@ -105,6 +106,7 @@
 						user_type:0
 					}
 				};
+				postData.searchItem.shop_no = uni.getStorageSync('staffInfo').user_no;
 				postData.tokenFuncName = 'getStaffToken'
 				postData.getAfter = {
 					orderItem:{

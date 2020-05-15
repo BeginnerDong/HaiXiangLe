@@ -62,7 +62,7 @@
 			const self = this;
 			const callback = (res) => {
 				self.$Utils.loadAll(['getUserInfoData'], self);
-				self.limit = uni.getStorageSync('staffInfo').thirdApp.withdraw
+				self.limit = uni.getStorageSync('user_info').thirdApp.withdraw
 			};
 			self.$Token.getProjectToken(callback, {
 				refreshToken: true

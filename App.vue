@@ -26,13 +26,13 @@
 				};
 			};
 			console.log('22',params)
-			if(params.user_no){
+			if(params.user_no&&uni.getStorageSync('user_token')&&uni.getStorageSync('user_info').distriParent==''){
 				console.log(333)
 				const callback = (res) => {
 					console.log(222)
 				};
 				token.getProjectToken(callback, {
-					refreshToken: true,daren_no:params.user_no
+					refreshToken: true
 				})
 			};
 			//token.getProjectToken();

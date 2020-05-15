@@ -6,7 +6,7 @@
 				<view class="userPhoto mgr10"><image :src="userData.headImgUrl?userData.headImgUrl:''" mode=""></image></view>
 				<view>{{userData.nickname}}</view>
 			</view>
-			<view class="flexEnd" @click="flowLogAdd">西安站</view>
+			<view class="flexEnd">西安站</view>
 		</view>
 		<view class="userTitH"></view>
 		
