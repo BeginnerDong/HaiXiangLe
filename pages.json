@@ -141,6 +141,13 @@
 				"navigationBarTitleText": "",//预约订单确认
 				"onReachBottomDistance":100
 			}
+		},
+		{
+			"path": "pages/userOrderDetail/userOrderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情",//订单详情
+				"onReachBottomDistance":100
+			}
 		}
     ],
 	"globalStyle": {
