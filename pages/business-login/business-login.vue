@@ -87,5 +87,5 @@
 	
 	.loginCont{width:90%;margin: 0 auto;z-index: 2;padding:0 60rpx;box-sizing: border-box;}
 	.loginCont .item{border-radius: 45rpx;height: 80rpx;box-sizing: border-box;padding: 0 30rpx;border: 1px solid #c3c3c3;overflow: hidden;}
-	.loginCont .item input{font-size: 26rpx;height: 80rpx;width: 100%;box-sizing: border-box;}
+	.loginCont .item input{font-size: 26rpx;height: 80rpx;line-height: 44rpx;padding: 20rpx 0 16rpx 0;width: 100%;box-sizing: border-box;}
 </style>

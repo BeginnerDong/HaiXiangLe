@@ -5,8 +5,9 @@
 			<view class="orderNav whiteBj boxShaow color6 mgb15 flexRowBetween">
 				<view class="tt" :class="curr==1?'on':''" @click="changeCurr('1')">全部订单</view>
 				<view class="tt" :class="curr==2?'on':''" @click="changeCurr('2')">已支付</view>
-				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')">已预约</view>
-				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')">已完成</view>
+				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')">已发货</view>
+				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')">已预约</view>
+				<view class="tt" :class="curr==5?'on':''" @click="changeCurr('5')">已完成</view>
 			</view>
 		</view>
 		
@@ -17,8 +18,14 @@
 					
 					<view class="item" v-for="(item,index) in mainData" :key="index">
 						<view class="fs12 flexRowBetween mgb10">
+							<!-- <view class="color6">交易时间：{{item.create_time}}</view>
+							<view class="red" v-if="item.type==2&&item.transport_status!=2">已支付</view>
+							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
+							<view class="red" v-if="item.transport_status==2">已完成</view> -->
+							
 							<view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red" v-if="item.type==2&&item.transport_status!=2">已付款</view>
+							<view class="red" v-if="item.type==2&&item.transport_status!=2">已支付</view>
+							<view class="red" v-if="item.type==1&&item.transport_status==1">已发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
 							<view class="red" v-if="item.transport_status==2">已完成</view>
 						</view>
@@ -38,6 +45,10 @@
 							</view>
 						</view>
 						<view class="borderB1 mgt15" v-if="item.type==1"></view>
+						
+						<view class="underBtn flexEnd mgt15 " v-if="item.type==1&&item.transport_status==1">
+							<view class="Bbtn" @click="orderUpdate(index)">确认收货</view>
+						</view>
 						<view class="pdtb15 borderB1 fs12 color6" v-if="item.type==1">
 							<view class="iconText flex">
 								<view class="sIcon"><image src="../../static/images/confirml-icon1.png" mode=""></image></view>

@@ -52,7 +52,8 @@
 					</view>
 				</view>
 			</view>
-			<view class="flexRowBetween pdt10 color9 fs12">
+			<view class="fs13 pdt5" style="color: #ffb541;">结束时间：2020.05.20 10:40</view>
+			<view class="flexRowBetween pdt5 color9 fs12">
 				<view>销售量：{{mainData.sale_count}}</view>
 				<view>库存量：{{mainData.stock}}</view>
 			</view>

@@ -1,11 +1,17 @@
 	
 
 /* 切换带背景导航 */
-.tooling_indNav{padding: 30rpx 4%;}
+/* .tooling_indNav{padding: 30rpx 4%;}
 .tooling_indNav .list{background: #fff; border-radius: 10rpx;overflow: hidden; display: flex;justify-content: center; align-items: center;}
 .tooling_indNav .list .item{width: 50%;box-sizing: border-box;text-align: center;padding: 0 10rpx;color: #333;line-height: 70rpx;border-right: 2rpx solid #eee;}
 .tooling_indNav .list .item.on{background: #86e2b1; color: #fff;}
 .tooling_indNav .list .item:last-child{border-right: 0;}
+ */
+.tooling_indNav{border-radius: 40rpx;overflow: hidden;}
+.tooling_indNav .tt{width: 50%;box-sizing: border-box;text-align: center;padding: 0 10rpx;line-height: 70rpx;}
+.tooling_indNav .tt.on{background: #86e2b1; color: #fff; border-radius: 40rpx;}
+.tooling_indNav .tt:last-child{border-right: 0;}
+
 
 
 

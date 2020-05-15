@@ -24,11 +24,17 @@
 					</view>
 					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=3'}})">
 						<view class="icon">
+							<image src="../../static/images/about-icon-01.png"></image>
+						</view>
+						<view>已发货</view>
+					</view>
+					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=4'}})">
+						<view class="icon">
 							<image src="../../static/images/about-icon2.png"></image>
 						</view>
 						<view>已预约</view>
 					</view>
-					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=4'}})">
+					<view class="item" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder?num=5'}})">
 						<view class="icon">
 							<image src="../../static/images/about-icon3.png"></image>
 						</view>
