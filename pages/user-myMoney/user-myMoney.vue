@@ -11,7 +11,7 @@
 				<view class="color6">可提现</view>
 			</view>
 			<view class="child flexColumn">
-				<view class="fs18 ftw mgb5">{{userInfoData.hasCashOut&&userInfoData.hasCashOut.count!=0?userInfoData.hasCashOut.count:'0.00'}}</view>
+				<view class="fs18 ftw mgb5">{{userInfoData.hasCashOut&&userInfoData.hasCashOut.count!=0?-userInfoData.hasCashOut.count:'0.00'}}</view>
 				<view class="color6">已提现</view>
 			</view>
 			<view class="child flexCenter">

@@ -286,6 +286,11 @@
 					self.$Utils.showToast('请同意平台用户服务协议', 'none')
 					return
 				};
+				if (self.submitData.phone.trim().length != 11 || !/^1[3|4|5|6|7|8|9]\d{9}$/.test(self.submitData.phone)) {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入正确的手机号', 'none', 1000)
+					return;
+				};
 				var data = {
 					name:self.submitData.name,
 					phone:self.submitData.phone,

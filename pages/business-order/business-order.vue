@@ -5,11 +5,11 @@
 			<view class="numHead pdlr4 pdt30 pdb20 flexRowBetween white pubBj pr">
 				<view class="quitBtn fs13" @click="loginOff">退出登录</view>
 				<view class="item flexColumn on pr">
-					<view class="fs18 ftn">56</view>
+					<view class="fs18 ftn">{{dayCount}}</view>
 					<view class="fs13 pdt5">订单数量总数(个)</view>
 				</view>
 				<view class="item flexColumn">
-					<view class="red fs18 ftn">5623</view>
+					<view class="red fs18 ftn">{{moneyCount}}</view>
 					<view class="fs13 pdt5">订单总金额(元)</view>
 				</view>
 			</view>
@@ -23,7 +23,7 @@
 				<view class="tt" :class="curr==1?'on':''" @click="changeCurr('1')">全部订单</view>
 				<view class="tt" :class="curr==2?'on':''" @click="changeCurr('2')">待发货</view>
 				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')">已发货</view>
-				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('3')">已收货</view>
+				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')">已收货</view>
 			</view>
 			<view class="orderNav whiteBj boxShaow color6 mgb15 flexRowBetween" v-show="currNav==2" >
 				<view class="tt" :class="statusTwo==1?'on':''" @click="changeStatusTwo('1')">全部订单</view>
@@ -39,7 +39,9 @@
 					<view class="item" v-for="(item,index) in mainData" :key="index">
 						<view class="fs12 flexRowBetween mgb10">
 							<view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red">{{item.transport_status==0?'待核销':'已核销'}}</view>
+							<view class="red" v-if="item.transport_status==0">待发货</view>
+							<view class="red" v-if="item.transport_status==1">已发货</view>
+							<view class="red" v-if="item.transport_status==2">已收货</view>
 						</view>
 						<view class="flexRowBetween">
 							<view class="pic">
@@ -58,14 +60,14 @@
 						</view>
 						<view class="borderB1 mgt15"></view>
 						<view class="pdt15 fs12 color6">
-							<view class="iconText">姓名：{{item.name}}</view>
-							<view class="iconText flex">电话：{{item.phone}}</view>
+							<view class="iconText">姓名：{{item.snap_address?item.snap_address.name:''}}</view>
+							<view class="iconText flex">电话：{{item.snap_address?item.snap_address.phone:''}}</view>
 						</view>
 						<view class="borderB1 mgt15"></view>
-						<view class="underBtn flexEnd pdlr4 mgt15">
-							<view class="Bbtn" style="width: 190rpx;" @click="orderNumberShow">填写快递单号</view>
+						<view class="underBtn flexEnd pdlr4 mgt15"  v-if="item.transport_status==0">
+							<view class="Bbtn" style="width: 190rpx;" @click="orderNumberShow(index)">填写快递单号</view>
 						</view>
-						<view class="pdt15 fs12 color6">快递单号：54654643513213456</view>
+						<view class="pdt15 fs12 color6" v-if="item.transport_status==1">快递单号：{{item.express_info}}</view>
 					</view>
 				</view>
 				<view class="proRow" v-show="currNav==2">
@@ -91,11 +93,11 @@
 						</view>
 						<view class="borderB1 mgt15"></view>
 						<view class="flexRowBetween pdt15 fs12">
-							<view>预约时间：2020.02.03 16:00</view>
+							<view>预约时间：{{Utils.timeto(item.invalid_time*1000,'ymd-hms')}}</view>
 							<view>{{item.name}}<span class="mgl5">{{item.phone}}</span></view>
 						</view>
-						<view class="f5bj pdlr4 pdt10 pdb10 fs12 color6 radius8 mgt10">
-							<view>备注信息：附近即可落地生根两会上公开更好发动机是客户高考分数高刚恢复健康的说法</view>
+						<view class="f5bj pdlr4 pdt10 pdb10 fs12 color6 radius8 mgt10" v-if="item.passage1!=''">
+							<view>备注信息：{{item.passage1}}</view>
 						</view>
 						<!-- <view class="pdt15 fs12 color6">
 							<view class="iconText">姓名：{{item.name}}</view>
@@ -109,12 +111,12 @@
 		<!-- 快递单号弹框 -->
 		<view class="black-bj" v-show="is_show"></view>
 		<view class="orderNumber whiteBj radius10" v-show="is_orderNumber">
-			<view class="closebtn" @click="orderNumberShow">×</view>
+			<view class="closebtn" @click="orderNumberShow(-1)">×</view>
 			<view class="submitbtn mgt20">
-				<input class="Wbtn" type="number" style="background-color: #F5F5F5;line-height: 40rpx;padding: 20rpx 0;box-sizing: border-box;color: #222;" placeholder="请输入单号" placeholder-class="placeholder">
+				<input class="Wbtn" type="text" v-model="express_info" style="background-color: #F5F5F5;line-height: 40rpx;padding: 20rpx 0;box-sizing: border-box;color: #222;" placeholder="请输入单号" placeholder-class="placeholder">
 			</view>
 			<view class="submitbtn mgt25">
-				<view class="Wbtn">确定</view>
+				<view class="Wbtn" @click="Utils.stopMultiClick(orderUpdate)">确定</view>
 			</view>
 		</view>
 		
@@ -142,12 +144,17 @@
 				mainData:[],
 				searchItem:{
 					pay_status:1,
-					type:1,
+					type:2,
 					
 					user_type:0
 				},
 				statusTwo:1,
-				is_orderNumber:false
+				is_orderNumber:false,
+				Utils:this.$Utils,
+				moneyCount:0,
+				dayCount:0,
+				willId:-1,
+				express_info:''
 			}
 		},
 		
@@ -159,7 +166,7 @@
 		onLoad(options) {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['wxJsSdk'], self);
+			self.$Utils.loadAll(['wxJsSdk','getDayData'], self);
 		},
 		
 		onShow() {
@@ -167,18 +174,119 @@
 			self.getMainData(true)
 		},
 		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
+			
+			orderUpdate() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				if(self.willId<0){
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('数据有误，请重试','none');
+					return
+				};
+				if(self.express_info==''){
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入快递单号','none');
+					return
+				};
+				uni.setStorageSync('canClick', false);
+				const postData = {};
+				postData.tokenFuncName = 'getStaffToken';
+				postData.data = {
+					transport_status:1,
+				};
+				postData.searchItem = {
+					id:self.willId,
+					user_type:0
+				};
+				postData.saveAfter = [{
+					tableName: 'Order',
+					FuncName: 'update',
+					data: {
+						express_info:self.express_info
+					},
+					searchItem: {
+						id:self.willId,
+						user_type:0
+					}
+				}];
+				const callback = (data) => {
+					uni.setStorageSync('canClick', true);
+					if (data && data.solely_code == 100000) {
+						self.$Utils.showToast('操作成功','none');
+						self.is_show = false;
+						self.is_orderNumber = false;
+						setTimeout(function() {
+							self.getMainData(true)
+						}, 1000);
+					} else {
+						self.$Utils.showToast(data.msg,'none')
+					}
+				};
+				self.$apis.orderUpdate(postData, callback);
+			 },
+			
+			getDayData() {
+				const self = this;
+				const postData = {};
+				var dayStart = new Date(new Date().setHours(0, 0, 0, 0)).getTime() / 1000;
+				var nowTime = (new Date()).getTime() / 1000;
+				postData.tokenFuncName = 'getStaffToken';
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					pay_status:1,
+					user_type:0
+				};
+				postData.searchItem.create_time=['between',[dayStart,nowTime]];
+				const callback = (res) => {
+					if (res) {
+						self.dayCount = res.info.total;
+						for (var i = 0; i < res.info.data.length; i++) {
+							self.moneyCount += parseFloat(res.info.data[i].rider_income)
+						}
+						
+					}
+					self.$Utils.finishFunc('getDayData');
+				};
+				self.$apis.orderGet(postData, callback);
+			},
+			
 			currNavChange(currNav){
 				const self = this;
+				self.curr = 1;
+				self.statusTwo = 1;
+				delete self.searchItem.transport_status;
 				if(currNav!=self.currNav){
-					self.currNav = 	currNav
+					self.currNav = 	currNav;
+					if(self.currNav==1){
+						self.searchItem.type = 2
+					}else if(self.currNav==2){
+						self.searchItem.type = 1
+					};
+					self.getMainData(true)
 				}
 			},
-			orderNumberShow(){
+			
+			orderNumberShow(index){
 				const self = this;
+				if(index>0||index==0){
+					self.willId = self.mainData[index].id;
+				}else{
+					self.willId = -1
+				};
 				self.is_show = !self.is_show;
 				self.is_orderNumber = !self.is_orderNumber;
 			},
+			
 			loginOff(){
 				const self = this;
 				uni.removeStorageSync('staffInfo');
@@ -233,6 +341,8 @@
 					}else if(self.curr==2){
 						self.searchItem.transport_status = 0
 					}else if(self.curr==3){
+						self.searchItem.transport_status = 1
+					}else if(self.curr==4){
 						self.searchItem.transport_status = 2
 					}
 					self.getMainData(true)

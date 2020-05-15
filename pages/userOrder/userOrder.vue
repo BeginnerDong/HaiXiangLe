@@ -4,7 +4,7 @@
 		<view class="topNavFix f5bj">
 			<view class="orderNav whiteBj boxShaow color6 mgb15 flexRowBetween">
 				<view class="tt" :class="curr==1?'on':''" @click="changeCurr('1')">全部订单</view>
-				<view class="tt" :class="curr==2?'on':''" @click="changeCurr('2')">已支付</view>
+				<view class="tt" :class="curr==2?'on':''" @click="changeCurr('2')">待发货</view>
 				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')">已发货</view>
 				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')">已预约</view>
 				<view class="tt" :class="curr==5?'on':''" @click="changeCurr('5')">已完成</view>
@@ -19,12 +19,12 @@
 					<view class="item" v-for="(item,index) in mainData" :key="index">
 						<view class="fs12 flexRowBetween mgb10">
 							<!-- <view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red" v-if="item.type==2&&item.transport_status!=2">已支付</view>
+							<view class="red" v-if="item.type==2&&item.transport_status!=2">待发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
 							<view class="red" v-if="item.transport_status==2">已完成</view> -->
 							
 							<view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red" v-if="item.type==2&&item.transport_status!=2">已支付</view>
+							<view class="red" v-if="item.type==2&&item.transport_status!=2">待发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status==1">已发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
 							<view class="red" v-if="item.transport_status==2">已完成</view>
@@ -130,6 +130,32 @@
 		
 		methods: {
 			
+			
+			orderUpdate(index) {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.data = {
+					transport_status:2,
+				};
+				postData.searchItem = {
+					id:self.mainData[index].id,
+				};
+				const callback = (data) => {
+					uni.setStorageSync('canClick', true);
+					if (data && data.solely_code == 100000) {
+						self.$Utils.showToast('操作成功','none');
+						setTimeout(function() {
+							self.getMainData(true)
+						}, 1000);
+					} else {
+						self.$Utils.showToast(data.msg,'none')
+					}
+				};
+				self.$apis.orderUpdate(postData, callback);
+			 },
+			
 			toDetail(index){
 				const self = this;
 				self.Router.navigateTo({route:{path:'/pages/detail/detail?id='+self.mainData[index].orderItem[0].snap_product.product.id}})
@@ -144,12 +170,15 @@
 						delete self.searchItem.transport_status;
 					}else if(self.curr==2){
 						self.searchItem.type=2
-						self.searchItem.transport_status=['in',[0,1]]
+						self.searchItem.transport_status=['in',[0]]
 					}else if(self.curr==3){
-						self.searchItem.type=1
-						self.searchItem.transport_status=['in',[0,1]]
+						self.searchItem.type=2
+						self.searchItem.transport_status=['in',[1]]
+					}else if(self.curr==4){
+						self.searchItem.type=2
+						self.searchItem.transport_status=2
 					}else{
-						delete self.searchItem.type;
+						delete self.searchItem.type
 						self.searchItem.transport_status=2
 					}
 					self.getMainData(true)

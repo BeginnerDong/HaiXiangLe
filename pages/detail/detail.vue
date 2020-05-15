@@ -52,7 +52,9 @@
 					</view>
 				</view>
 			</view>
-			<view class="fs13 pdt5" style="color: #ffb541;">结束时间：2020.05.20 10:40</view>
+			<view class="fs13 pdt5" v-show="mainData.is_notBuying&&!mainData.is_noStock" style="color: #ffb541;">
+				结束时间：{{Utils.timeto(mainData.end_time,'ymd-hms')}}
+			</view>
 			<view class="flexRowBetween pdt5 color9 fs12">
 				<view>销售量：{{mainData.sale_count}}</view>
 				<view>库存量：{{mainData.stock}}</view>
@@ -145,7 +147,8 @@
 				showPoster: false,
 				url: '',
 				QrData:{},
-				windowHeight:0
+				windowHeight:0,
+				Utils:this.$Utils,
 			}
 		},
 		
