@@ -247,11 +247,12 @@
 					user_type:0
 				};
 				postData.searchItem.create_time=['between',[dayStart,nowTime]];
+				postData.searchItem.shop_no = uni.getStorageSync('staffInfo').user_no;
 				const callback = (res) => {
 					if (res) {
 						self.dayCount = res.info.total;
 						for (var i = 0; i < res.info.data.length; i++) {
-							self.moneyCount += parseFloat(res.info.data[i].rider_income)
+							self.moneyCount += parseFloat(res.info.data[i].price)
 						}
 						
 					}
@@ -301,10 +302,33 @@
 					scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
 					success: function(res) {
 						var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-						console.log('result', result)
-						self.Router.navigateTo({route:{path:'/pages/business-orderHX/business-orderHX?id='+result}})
+						console.log('result', result);
+						self.getOrderData(result)
+						//self.Router.navigateTo({route:{path:'/pages/business-orderHX/business-orderHX?id='+result}})
 					}
 				});
+			},
+			
+			getOrderData(result) {
+				const self = this;
+				console.log('852369',self.id)
+				const postData = {
+					searchItem:{
+						id:result,
+						user_type:0
+					}
+				};
+				postData.searchItem.shop_no = uni.getStorageSync('staffInfo').user_no;
+				postData.tokenFuncName = 'getStaffToken'
+				console.log('postData',postData)
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.Router.navigateTo({route:{path:'/pages/business-orderHX/business-orderHX?id='+res.info.data[0].id}})
+					} else {
+						self.$Utils.showToast('未查询到订单！', 'none');
+					};
+				};
+				self.$apis.orderGet(postData, callback);
 			},
 			
 			wxJsSdk() {
@@ -362,6 +386,7 @@
 					self.getMainData(true)
 				}
 			},
+			
 			getMainData(isNew) {
 				const self = this;
 				if (isNew) {

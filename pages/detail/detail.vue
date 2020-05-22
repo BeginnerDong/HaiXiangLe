@@ -414,7 +414,7 @@
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
 						self.mainData = res.info.data[0];
-						if(self.mainData.stock==0||self.mainData.sellout==1){
+						if(self.mainData.sellout==1){
 							self.mainData.is_noStock = true
 						};
 						if(parseInt(self.mainData.end_time)>now){

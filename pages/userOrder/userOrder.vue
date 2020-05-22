@@ -46,9 +46,10 @@
 						</view>
 						<view class="borderB1 mgt15" v-if="item.type==1"></view>
 						
-						<view class="underBtn flexEnd mgt15 " v-if="item.type==1&&item.transport_status==1">
+						<view class="underBtn flexEnd mgt15 " v-if="item.type==2&&item.transport_status==1">
 							<view class="Bbtn" @click="orderUpdate(index)">确认收货</view>
 						</view>
+						<view class="pdt15 fs12 color6" v-if="item.transport_status==1&&item.type==2">快递单号：{{item.express_info}}</view>
 						<view class="pdtb15 borderB1 fs12 color6" v-if="item.type==1">
 							<view class="iconText flex">
 								<view class="sIcon"><image src="../../static/images/confirml-icon1.png" mode=""></image></view>

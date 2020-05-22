@@ -134,7 +134,8 @@
 					name:'',
 					phone:'',
 					passage1:'',
-					invalid_time:''
+					invalid_time:'',
+					day_time:''
 				},
 				totalPrice:0,
 				pay:{},
@@ -226,7 +227,10 @@
 			changeTime(e){
 				const self = this;
 				self.time = e;
-				self.submitData.invalid_time = self.$Utils.timeToTimestamp(e)
+				console.log('e',e)
+				self.submitData.invalid_time = self.$Utils.timeToTimestamp(e);
+				self.submitData.day_time = self.$Utils.timeToTimestamp(e.substr(0,10))
+				console.log('day_time',self.submitData.day_time )
 				console.log(self.submitData)
 			},
 			
@@ -296,7 +300,8 @@
 					phone:self.submitData.phone,
 					invalid_time:self.submitData.invalid_time,
 					shop_no:self.mainData[0].product.shop_no,
-					passage1:self.submitData.passage1
+					passage1:self.submitData.passage1,
+					day_time:self.submitData.day_time
 				}
 				var orderList = [{
 					sku_id: self.mainData[0].sku_id,

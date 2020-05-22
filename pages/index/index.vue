@@ -211,7 +211,7 @@
 					if (res.info.data.length > 0) {
 						self.mainData.push.apply(self.mainData, res.info.data);
 						for (var i = 0; i < self.mainData.length; i++) {
-							if(self.mainData[i].stock==0||self.mainData[i].sellout==1){
+							if(self.mainData[i].sellout==1){
 								self.mainData[i].is_noStock = true
 							};
 							if(parseInt(self.mainData[i].end_time)>now){
