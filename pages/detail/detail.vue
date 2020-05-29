@@ -57,7 +57,7 @@
 			</view>
 			<view class="flexRowBetween pdt5 color9 fs12">
 				<view>销售量：{{mainData.sale_count}}</view>
-				<view>库存量：{{mainData.stock}}</view>
+				<view>库存量：{{mainData.sku[specsCurr].stock}}</view>
 			</view>
 		</view>
 		

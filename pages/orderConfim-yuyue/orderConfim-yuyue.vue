@@ -252,7 +252,8 @@
 				for (var i = 0; i < self.mainData.length; i++) {
 					self.totalPrice += self.mainData[i].product.sku[self.mainData[i].skuIndex].price * self.mainData[i].count
 				};
-				var wxPay = parseFloat(self.totalPrice).toFixed(2)
+				self.totalPrice = parseFloat(self.totalPrice).toFixed(2);
+				var wxPay = self.totalPrice;
 				//console.log('wxPay',wxPay)
 				if (wxPay > 0) {
 					self.pay.wxPay = {

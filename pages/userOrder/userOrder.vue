@@ -24,7 +24,7 @@
 							<view class="red" v-if="item.transport_status==2">已完成</view> -->
 							
 							<view class="color6">交易时间：{{item.create_time}}</view>
-							<view class="red" v-if="item.type==2&&item.transport_status!=2">待发货</view>
+							<view class="red" v-if="item.type==2&&item.transport_status==0">待发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status==1">已发货</view>
 							<view class="red" v-if="item.type==1&&item.transport_status!=2">已预约</view>
 							<view class="red" v-if="item.transport_status==2">已完成</view>
@@ -183,7 +183,7 @@
 						self.searchItem.transport_status=['in',[1]]
 					}else if(self.curr==4){
 						self.searchItem.type=2
-						self.searchItem.transport_status=2
+						self.searchItem.transport_status=0
 					}else{
 						delete self.searchItem.type
 						self.searchItem.transport_status=2
