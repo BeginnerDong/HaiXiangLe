@@ -93,7 +93,7 @@
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			console.log('222',options);
 			
-			self.$Utils.loadAll(['tokenGet','getMainData'], self);
+			self.$Utils.loadAll(['getUserData','getMainData'], self);
 			
 			
 		},

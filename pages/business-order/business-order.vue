@@ -20,15 +20,38 @@
 				</view>
 			</view>
 			<view class="orderNav whiteBj boxShaow color6 mgb15 flexRowBetween" v-show="currNav==1" >
-				<view class="tt" :class="curr==1?'on':''" @click="changeCurr('1')">全部订单</view>
-				<view class="tt" :class="curr==2?'on':''" @click="changeCurr('2')">待发货</view>
-				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')">已发货</view>
-				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')">已收货</view>
+				<view class="tt" :class="curr==1?'on':''" @click="changeCurr('1')" style="position: relative;">全部订单
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:0;">{{userData&&userData.order?userData.order.allOne:''}}</view>
+				</view>
+				<view class="tt" :class="curr==2?'on':''" style="position: relative;" @click="changeCurr('2')">待发货
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:0;">{{userData&&userData.order?userData.order.noTransOne:''}}</view>
+				</view>
+				<view class="tt" :class="curr==3?'on':''" @click="changeCurr('3')"  style="position: relative;">已发货
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:0;">{{userData&&userData.order?userData.order.hasTransOne:''}}</view>
+				</view>
+				<view class="tt" :class="curr==4?'on':''" @click="changeCurr('4')"  style="position: relative;">
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:0;">{{userData&&userData.order?userData.order.completeOne:''}}</view>
+					已收货
+				</view>
 			</view>
 			<view class="orderNav whiteBj boxShaow color6 mgb15 flexRowBetween" v-show="currNav==2" >
-				<view class="tt" :class="statusTwo==1?'on':''" @click="changeStatusTwo('1')">全部订单</view>
-				<view class="tt" :class="statusTwo==2?'on':''" @click="changeStatusTwo('2')">未核销</view>
-				<view class="tt" :class="statusTwo==3?'on':''" @click="changeStatusTwo('3')">已核销</view>
+				<view class="tt" :class="statusTwo==1?'on':''" @click="changeStatusTwo('1')" style="position: relative;">全部订单
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:20px;">{{userData&&userData.order?userData.order.allTwo:''}}</view>
+				</view>
+				<view class="tt" :class="statusTwo==2?'on':''" @click="changeStatusTwo('2')" style="position: relative;">未核销
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:20px;">{{userData&&userData.order?userData.order.noTransTwo:''}}</view>
+				</view>
+				<view class="tt" :class="statusTwo==3?'on':''" @click="changeStatusTwo('3')" style="position: relative;">
+					<view style="width: 20px;height: 20px;border-radius: 50%;overflow: hidden;text-align: center;line-height: 20px;
+					color: #fff;background-color: #86e2b1;position: absolute;top: 0;right:20px;">{{userData&&userData.order?userData.order.completeTwo:''}}</view>
+					已核销
+				</view>
 			</view>
 		</view>
 		<view class="topNavH"></view>
@@ -166,7 +189,7 @@
 		onLoad(options) {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['wxJsSdk','getDayData'], self);
+			self.$Utils.loadAll(['wxJsSdk','getDayData','getUserData'], self);
 		},
 		
 		onShow() {
@@ -423,6 +446,70 @@
 					self.$Utils.finishFunc('getMainData');
 				};
 				self.$apis.orderGet(postData, callback);
+			},
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getStaffToken';
+				postData.getAfter = {
+					order: {
+						tableName: 'Order',
+						searchItem:{
+							pay_status:1,
+							user_type:0
+						},
+						middleKey: 'user_no',
+						key: 'shop_no',
+						condition: 'in',
+						compute:{
+						  allOne:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:2,user_type:0}
+						  ],
+						  noTransOne:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:2,user_type:0,transport_status:0}
+						  ],
+						  hasTransOne:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:2,user_type:0,transport_status:1}
+						  ],
+						  completeOne:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:2,user_type:0,transport_status:2}
+						  ],
+						  allTwo:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:1,user_type:0}
+						  ],
+						  noTransTwo:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:1,user_type:0,transport_status:0}
+						  ],
+						  
+						  completeTwo:[
+						    'count',
+						    'count',
+						    {pay_status:1,type:1,user_type:0,transport_status:2}
+						  ],
+						},
+					},
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.userData = res.info.data[0]
+					}
+					console.log('self.mainData', self.mainData)
+					self.$Utils.finishFunc('getUserData');
+				};
+				self.$apis.userGet(postData, callback);
 			},
 		}
 	};

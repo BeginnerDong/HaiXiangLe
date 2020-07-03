@@ -139,7 +139,10 @@
 				postData.tokenFuncName = 'getProjectToken';
 				const callback = (res) => {
 					if (res.solely_code == 100000&&res.info.data[0]) {
-						self.userData = res.info.data[0]
+						self.userData = res.info.data[0];
+						if(self.userData.primary_scope>10&&self.userData.info.name==''){
+							self.Router.navigateTo({route:{path:'/pages/user_info/user_info'}})
+						};
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};

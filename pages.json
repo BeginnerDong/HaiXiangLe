@@ -149,6 +149,13 @@
 				"onReachBottomDistance":100
 			}
 		}
+        ,{
+            "path" : "pages/user_info/user_info",
+            "style" : {
+				"navigationBarTitleText": "填写信息",//订单详情
+				"onReachBottomDistance":100
+			}
+        }
     ],
 	"globalStyle": {
 		//"navigationStyle":"custom",
