@@ -63,12 +63,20 @@
 		
 		<view class="f5H10"></view>
 		<view class="pdlr4 pdt15 pdb15" style="background-color: #fff;">
-			<view class="fs15">规格</view>
-			<view class="flex" style="flex-wrap: wrap;">
-				<view class="specsBtn" :class="specsCurr==index?'on':''" 
-				@click="specsChange(index)" v-for="(item,index) in mainData.sku" :key="index">{{item.title}}</view>
+			<view v-for="(item,index) in labelData" :key="index" style="margin-top: 20rpx;">
+				<view class="fs15">{{item.title}}</view>
+				<view class="flex" style="flex-wrap: wrap;" >
+					<view class="specsBtn" v-for="(c_item,c_index) in item.children" :key="c_item.id"
+						:class="Utils.inArray(c_item.id,choose_sku_item)==-1?'cantChoose'
+						:(Utils.inArray(c_item.id,sku_item)!=-1?'on':'')"
+						@click="Utils.inArray($event.currentTarget.dataset.c_id,choose_sku_item)!=-1?
+						chooseSku($event.currentTarget.dataset.id,$event.currentTarget.dataset.c_id):''"
+						>
+						{{c_item.title}}
+					</view>
+					
+				</view>
 			</view>
-			
 		</view>
 		<view class="f5H10"></view>
 		<view class="pdlr4 pdt15 pdb15 fs13" style="background-color: #fff;">
@@ -132,11 +140,6 @@
 				showView: false,
 				wx_info:{},
 				is_show:false,
-				labelData: [
-					"../../static/images/detailsl-img.png",
-					"../../static/images/detailsl-img.png",
-					"../../static/images/detailsl-img.png"
-				],
 				specsCurr:0,
 				specsData:['2盒装','3盒装'],
 				is_kefuShow:false,
@@ -149,6 +152,11 @@
 				QrData:{},
 				windowHeight:0,
 				Utils:this.$Utils,
+				labelData:[],
+				skuData:[],
+				
+				sku_item:[],
+				choose_sku_item:[]
 			}
 		},
 		
@@ -192,6 +200,43 @@
 		
 		methods: {
 			
+			chooseSku(parentid,id){
+				const self = this;
+			    self.skuData = {};
+			    if(self.choose_sku_item.indexOf(id)==-1){
+			      return;
+			    };
+			    self.choose_sku_item = [];
+			    var sku = self.mainData.label[parentid];
+			    for(var i=0;i<sku.children.length;i++){
+			      if(self.sku_item.indexOf(sku.children[i].id)!=-1){
+			        self.sku_item.splice(self.sku_item.indexOf(sku.children[i].id), 1);
+			      };
+			      self.choose_sku_item.push(sku.children[i].id);
+			    };
+			
+			    
+			    for (var i = 0; i < self.mainData.sku.length; i++) {
+			      if(self.mainData.sku[i].sku_item.indexOf(parseInt(id))!=-1){
+			        self.choose_sku_item.push.apply(self.choose_sku_item,self.mainData.sku[i].sku_item);  
+			      };
+			    };
+			
+			    for(var i=0;i<self.sku_item.length;i++){
+			      if(self.choose_sku_item.indexOf(parseInt(self.sku_item[i]))==-1){
+			        self.sku_item.splice(i, 1); 
+			      };
+			    };
+			    self.sku_item.push(id);
+			    for(var i=0;i<self.mainData.sku.length;i++){ 
+			      if(JSON.stringify(self.mainData.sku[i].sku_item.sort())==JSON.stringify(self.sku_item.sort())){
+			        //self.id = self.mainData.sku[i].id;
+			        self.skuData = self.$Utils.cloneForm(self.mainData.sku[i]);
+					self.specsCurr = i
+			      };   
+			    }; 
+			},
+			
 			wxJsSdk() {
 				const self = this;
 				const postData = {
@@ -233,7 +278,7 @@
 				};
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				postData.param = 'http://test.solelyfinance.com/wx/?shareUser=' + uni.getStorageSync(
+				postData.param = 'http://www.yixiangyiyou.com/wx/?shareUser=' + uni.getStorageSync(
 						'user_no') + '&id=' + self.mainData.id + '#/pages/detail/detail',
 					postData.ext = 'png';
 				const callback = (res) => {
@@ -414,6 +459,21 @@
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
 						self.mainData = res.info.data[0];
+						for(var key in self.mainData.label){
+						  if(self.mainData.sku_array.indexOf(parseInt(key))!=-1){
+						    self.labelData.push(self.mainData.label[key])
+						  };    
+						};
+						console.log('self.labelData',self.labelData)
+						for (var i = 0; i < self.mainData.sku.length; i++) {
+						  /* if(self.mainData.sku[i].id==self.id){
+						    self.skuData = self.$Utils.cloneForm(self.mainData.sku[i]);
+						  }; */
+										
+						  self.choose_sku_item.push.apply(self.choose_sku_item,self.mainData.sku[i].sku_item);
+						};
+						self.skuData = self.$Utils.cloneForm(self.mainData.sku[0]);
+						self.sku_item = self.skuData.sku_item;
 						if(self.mainData.sellout==1){
 							self.mainData.is_noStock = true
 						};

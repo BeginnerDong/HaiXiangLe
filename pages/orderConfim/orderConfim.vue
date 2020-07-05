@@ -36,7 +36,9 @@
 					<view class="infor mgl10 avoidOverflow3">{{item.product&&item.product.title?item.product.title:''}}</view>
 				</view>
 				<view class="flexRowBetween borderB1 pdtb15">
-					<view class="flex">规格：{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].title:''}}</view>
+					<view class="flex">规格：
+						{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].title:''}}
+					</view>
 					<view class="flexEnd price">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:''}}</view>
 				</view>
 				<view class="flexRowBetween  pdt15">
@@ -153,6 +155,7 @@
 			if(options.shareUser){
 				self.shareUser = options.shareUser
 			};
+			console.log(self.mainData)
 			self.$Utils.loadAll(['getUserData','getDistriData','getArtData'], self);
 			self.countTotalPrice()
 		},

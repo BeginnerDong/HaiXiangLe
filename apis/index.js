@@ -17,7 +17,22 @@ export default {
 		};
 		http.HTTP(allParams);
 	},
-
+	
+	getLimit(param, callback) {
+	
+		var allParams = {
+			url: 'Project/Solely/getLimit',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	
+	
 	registerSuper(param, callback) {
 
 		var allParams = {

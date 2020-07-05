@@ -277,7 +277,7 @@
 						for (var i = 0; i < res.info.data.length; i++) {
 							self.moneyCount += parseFloat(res.info.data[i].price)
 						}
-						
+						self.moneyCount = parseFloat(self.moneyCount).toFixed(2)
 					}
 					self.$Utils.finishFunc('getDayData');
 				};
