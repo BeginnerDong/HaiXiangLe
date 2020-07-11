@@ -146,7 +146,6 @@
 					listorder: 'desc'
 				};
 				const callback = (res) => {
-					
 					if (res.info.data.length > 0) {
 						self.mainData.push.apply(self.mainData, res.info.data);
 						for (var i = 0; i < self.mainData.length; i++) {

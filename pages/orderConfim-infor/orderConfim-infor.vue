@@ -27,11 +27,11 @@
 					
 					<view class="item">
 						<view class="flex titIcon">
-							<view class="icon"><image :src="mainData.qrcode?mainData.qrcode:''" mode=""></image></view>
+							<view class="icon"><image src="../../static/images/confirml-img1.png" mode=""></image></view>
 							<view>二维码</view>
 						</view>
 						<view class="pdt15 flexCenter">
-							<view style="width: 300rpx;height: 300rpx;"><image src="../../static/images/confirml-img.png" mode=""></image></view>
+							<view style="width: 300rpx;height: 300rpx;"><image :src="mainData.qrcode?mainData.qrcode:''" mode=""></image></view>
 						</view>
 						<view class="fs13 color9 mgt10 center">出示二维码即可消费多个订单</view>
 					</view>

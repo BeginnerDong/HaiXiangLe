@@ -177,7 +177,8 @@
 				moneyCount:0,
 				dayCount:0,
 				willId:-1,
-				express_info:''
+				express_info:'',
+				userData:{}
 			}
 		},
 		
@@ -226,6 +227,7 @@
 				postData.tokenFuncName = 'getStaffToken';
 				postData.data = {
 					transport_status:1,
+					user_no:self.willUserNo
 				};
 				postData.searchItem = {
 					id:self.willId,
@@ -235,7 +237,8 @@
 					tableName: 'Order',
 					FuncName: 'update',
 					data: {
-						express_info:self.express_info
+						express_info:self.express_info,
+						user_no:self.willUserNo
 					},
 					searchItem: {
 						id:self.willId,
@@ -269,7 +272,7 @@
 					pay_status:1,
 					user_type:0
 				};
-				postData.searchItem.create_time=['between',[dayStart,nowTime]];
+				//postData.searchItem.create_time=['between',[dayStart,nowTime]];
 				postData.searchItem.shop_no = uni.getStorageSync('staffInfo').user_no;
 				const callback = (res) => {
 					if (res) {
@@ -304,6 +307,7 @@
 				const self = this;
 				if(index>0||index==0){
 					self.willId = self.mainData[index].id;
+					self.willUserNo = self.mainData[index].user_no
 				}else{
 					self.willId = -1
 				};

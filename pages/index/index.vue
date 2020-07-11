@@ -138,7 +138,7 @@
 				const self = this;
 				const postData = {
 					searchItem: {
-						user_no: 'U703728777319954'
+						user_no: 'U703703664371736'
 					}
 				};
 				console.log('postData', postData)

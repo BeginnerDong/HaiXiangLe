@@ -57,7 +57,7 @@
 			</view>
 			<view class="flexRowBetween pdt5 color9 fs12">
 				<view>销售量：{{mainData.sale_count}}</view>
-				<view>库存量：{{mainData.sku[specsCurr].stock}}</view>
+				<view>库存量：{{mainData.sku&&mainData.sku[specsCurr]?mainData.sku[specsCurr].stock:0}}</view>
 			</view>
 		</view>
 		
@@ -68,7 +68,8 @@
 				<view class="flex" style="flex-wrap: wrap;" >
 					<view class="specsBtn" v-for="(c_item,c_index) in item.children" :key="c_item.id"
 						:class="Utils.inArray(c_item.id,choose_sku_item)==-1?'cantChoose'
-						:(Utils.inArray(c_item.id,sku_item)!=-1?'on':'')"
+						:(Utils.inArray(c_item.id,sku_item)!=-1?'on':'')" :data-c_id = "c_item.id"
+						:data-id = "item.id"
 						@click="Utils.inArray($event.currentTarget.dataset.c_id,choose_sku_item)!=-1?
 						chooseSku($event.currentTarget.dataset.id,$event.currentTarget.dataset.c_id):''"
 						>
@@ -202,12 +203,19 @@
 			
 			chooseSku(parentid,id){
 				const self = this;
+				console.log(23232)
 			    self.skuData = {};
-			    if(self.choose_sku_item.indexOf(id)==-1){
+			    if(self.choose_sku_item.indexOf(parseInt(id))==-1){
+					console.log('self.choose_sku_item',self.choose_sku_item.indexOf(id))
+					console.log('self.choose_sku_item',self.choose_sku_item)
+					console.log('id',id)
+					console.log('parentid',parentid)
 			      return;
 			    };
 			    self.choose_sku_item = [];
+				console.log('parentid',parentid)
 			    var sku = self.mainData.label[parentid];
+				console.log('sku',sku)
 			    for(var i=0;i<sku.children.length;i++){
 			      if(self.sku_item.indexOf(sku.children[i].id)!=-1){
 			        self.sku_item.splice(self.sku_item.indexOf(sku.children[i].id), 1);
@@ -227,12 +235,14 @@
 			        self.sku_item.splice(i, 1); 
 			      };
 			    };
-			    self.sku_item.push(id);
+			    self.sku_item.push(parseInt(id));
+				console.log('self.sku_item',self.sku_item)
 			    for(var i=0;i<self.mainData.sku.length;i++){ 
 			      if(JSON.stringify(self.mainData.sku[i].sku_item.sort())==JSON.stringify(self.sku_item.sort())){
 			        //self.id = self.mainData.sku[i].id;
 			        self.skuData = self.$Utils.cloneForm(self.mainData.sku[i]);
 					self.specsCurr = i
+					console.log('self.specsCurr',self.specsCurr)
 			      };   
 			    }; 
 			},
@@ -443,6 +453,9 @@
 						condition: '=',
 						searchItem: {
 							status: 1
+						},
+						order:{
+							listorder:'desc'
 						}
 					},
 					shop: {
